@@ -5,6 +5,7 @@ use JSON::XS;
 
 my %games;
 my %players;
+my %maps;
 
 sub register {
 	my $name = $_[0]->{"userName"};
@@ -44,7 +45,13 @@ sub getGames {
 sub	createGame {
 	my $user = $_[0]->{'UserName'};
 	my $game = $_[0]->{'gameName'};
-
+	if(exists $games{$game}) { return { result => 'gameExists' }; }
+	elsif($players{$user}) { return { result => 'alreadyInGame' }; }
+	else {
+		$games{$game} = (
+				
+		);
+	}
 }
 
 my %callback = (
@@ -63,33 +70,57 @@ sub response {
 
 use Test::More qw 'no_plan';
 
-sub dbg_print {
+sub test {
+	my $res = decode_json(response encode_json $_[0]);
+	$_[1]->($res);
 }
 
-response my $data = encode_json {
-	userName	=> "John",
-	action		=> "register",
-};
+test { 
+		userName	=>	'John',
+		action		=>	'register'
+	},
+	sub { 
+		is($_[0]->{'result'}, 'OK', 'Register user');
+		ok(exists $players{'John'}, 'internal');
+	};
 
-response encode_json {
-	userName	=> "Jane",
-	action		=> "register",
-};
+test {
+		userName	=>	'Jane',
+		action		=>	'register'
+	},
+	sub {
+		is($_[0]->{'result'}, 'OK', 'Register another user');
+		ok(exists $players{'Jane'}, 'internal');
+	};
 
-response encode_json {
-	userName 	=>	"Jack",
-	action		=>	"register",
-};
+test {
+		userName	=>	'John',
+		action		=>	'register'
+	},
+	sub {
+		is($_[0]->{'result'}, 'alreadyTaken', 'Register existing user');
+	};
+		
+test {
+		userName	=>	'John',
+		action		=> 'logout'
+	},
+	sub {
+		is($_[0]->{'result'}, 'OK', 'Logout user');
+		ok(not (exists $players{'John'}), 'internal');	
+	};
 
-my $ans = response encode_json { action	=>	'getUsers' };
-print ($ans);
+test {
+		userName	=>	'Jack',
+		action		=>	'logout'
+	},
+	sub {
+		is($_[0]->{'result'}, 'unknownUser', 'Logout unexisting user');
+	};
 
-response encode_json {
-	userName	=>	'Jack',
-	action		=>	'logout'
-};
-
-print response encode_json {
-	userName	=>	'Kate',
-	action		=>	'logout'
-};
+test {
+		action		=>	'getUsers'
+	},
+	sub {
+		#my @users = @$_[0]->{'users'};
+	};

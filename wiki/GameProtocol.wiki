@@ -10,22 +10,22 @@ A server's response on a query is also a JSON object with mandatory field `resul
 
 == Error Messages ==
 
-=== Map Related ===
+=== Map Related Errors ===
 || `mapExists` || A given title is already used to name another map. ||
 || `unknownMap` || The map with a given name is not registered. ||
-|| `badMapInfo` || Format of a given [#MapInfo `MapInfo`] structure is incorrect. ||
+|| `badMapInfo` || Format of a given [#MapInfo MapInfo] structure is incorrect. ||
 
-=== User Related ===
+=== User Related Errors ===
 || `alreadyTaken` || A given user name is already taken by another user. ||
 || `unknownUser` || The user with a given name is not registered. ||
 || `alreadyInGame` || A given user is already playing a game. ||
 || `notInGame` || A given user is not playing any game. ||
 
-=== Game Related ===
+=== Game Related Errors ===
 || `gameExists` || A given title is already used to name another game. ||
 || `unknownGame` || The game with a given name is not registered. ||
-|| `badGameInfo` || Format of a given [#GameInfo `GameInfo`] structure is incorrect. ||
-|| `badGameState` || Format of a given [#GameState `GameState`] structure is incorrect. ||
+|| `badGameInfo` || Format of a given [#GameInfo GameInfo] structure is incorrect. ||
+|| `badGameState` || Format of a given [#GameState GameState] structure is incorrect. ||
 || `badMaxPlayers` || A maximal number of players allowable to compete in a given game is incorrect. ||
 || `alreadyMaxPlayers` || It is already registered maximal allowable number of players in a given game. ||
 || `alreadyStarted` || A given game is already started. ||
@@ -33,7 +33,7 @@ A server's response on a query is also a JSON object with mandatory field `resul
 || `notYourTurn` || It is turn of other player than a given user. ||
 || `badPlanet` || A planet number given as a move of the player is incorrect. ||
 
-=== Other ===
+=== Other Errors ===
 || `generalError` || Any other error of type that is not listed above. ||
 
 == Structures ==
@@ -46,7 +46,7 @@ A server's response on a query is also a JSON object with mandatory field `resul
 
 === `MapInfo` ===
 || `name` || _string_ || Name of the map. ||
-|| `planets` || _array_ || [#PlanetInfo `PlanetInfo`] structures that represent a _planar_ graph. ||
+|| `planets` || _array_ || [#PlanetInfo PlanetInfo] structures that represent a _planar_ graph. ||
 
 === `PlayerInfo` ===
 || `name` || _string_ || Name of the player. ||
@@ -70,12 +70,12 @@ A server's response on a query is also a JSON object with mandatory field `resul
 
 === `GameState` ===
 || `active` || _integer_ || Index of player which makes turn. ||
-|| `planets` || _array_ || [#PlanetState `PlanetState`] structures that represent state of the planets. ||
-|| `score` || _array_ || [#PlayerScore `PlayerScore`] structures that represents score of every player in the game. ||
+|| `planets` || _array_ || [#PlanetState PlanetState] structures that represent state of the planets. ||
+|| `score` || _array_ || [#PlayerScore PlayerScore] structures that represents score of every player in the game. ||
 
 == Queries ==
 
-=== Map Related ===
+=== Map Related Queries ===
   * *`getMaps`* — Return the list of registered maps.
   Parameters:
     _none_
@@ -87,13 +87,13 @@ A server's response on a query is also a JSON object with mandatory field `resul
   Parameters:
     * `mapName` — Name of the map.
   Outcome:
-    * `mapInfo` — [#MapInfo `MapInfo`] structure.
+    * `mapInfo` — [#MapInfo MapInfo] structure.
   Possible errors:
     * `unknownMap`
     * `generalError`
   * *`uploadMap`* — Upload a new map to the game server.
   Parameters:
-    * `mapInfo` — [#MapInfo `MapInfo`] structure.
+    * `mapInfo` — [#MapInfo MapInfo] structure.
   Outcome:
     _none_
   Possible errors:
@@ -101,12 +101,12 @@ A server's response on a query is also a JSON object with mandatory field `resul
     * `badMapInfo`
     * `generalError`
 
-=== User related ===
+=== User Related Queries ===
   * *`getUsers`* — Return the list of registered users.
   Parameters:
     _none_
   Outcome:
-    * `users` — Array of [#PlayerInfo `PlayerInfo`] structures ordered lexicographically by users' names.
+    * `users` — Array of [#PlayerInfo PlayerInfo] structures ordered lexicographically by users' names.
   Possible errors:
     * `generalError`
   * *`register`* — Register a new user on the game server.
@@ -156,7 +156,7 @@ A server's response on a query is also a JSON object with mandatory field `resul
     * `unknownUser`
     * `generalError`
 
-=== Game Related ===
+=== Game Related Queries ===
   * *`getGames`* — Return the list of registered games.
   Parameters:
     _none_
@@ -168,7 +168,7 @@ A server's response on a query is also a JSON object with mandatory field `resul
   Parameters:
     * `gameName` — Name of the game.
   Outcome:
-    * `game` — [#GameInfo `GameInfo`] structure.
+    * `game` — [#GameInfo GameInfo] structure.
   Possible errors:
     * `unknownGame`
     * `generalError`
@@ -190,8 +190,8 @@ A server's response on a query is also a JSON object with mandatory field `resul
   * *`loadGame`* — Upload a saved earlier game to the game server.
   Parameters:
     * `userName` — Name of the user that uploads this game.
-    * `gameInfo` — [#GameInfo `GameInfo`] structure.
-    * `gameState` — [#GameState `GameState`] structure.
+    * `gameInfo` — [#GameInfo GameInfo] structure.
+    * `gameState` — [#GameState GameState] structure.
   Outcome:
     _none_
   Possible errors:
@@ -205,7 +205,7 @@ A server's response on a query is also a JSON object with mandatory field `resul
   Parameters:
     * `gameName` — Name of the game.
   Outcome:
-    * `game` — [#GameState `GameState`] structure.
+    * `game` — [#GameState GameState] structure.
   Possible errors:
     * `unknownGame`
     * `notStarted`
@@ -213,7 +213,7 @@ A server's response on a query is also a JSON object with mandatory field `resul
   * *`move`* — Make a move.
   Parameters:
     * `userName` — Name of the user that makes the move.
-    * `planet` — Number of planet where a new base should be built.  Planets are numbered starting from zero and ordered as in `planets` array of [#MapInfo `MapInfo`] structure.
+    * `planet` — Number of planet where a new base should be built.  Planets are numbered starting from zero and ordered as in `planets` array of [#MapInfo MapInfo] structure.
   Outcome:
     _none_
   Possible errors:

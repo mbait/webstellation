@@ -14,6 +14,8 @@ A planet is owned by that player whose influence on it is the highest.  If more 
 
 If as a result of a turn some planet passed from one player to another, all bases on it are destroyed.
 
+A player on his turn can concede his defeat and leave the game.  In that case all the bases built by this player are destroyed and ownership of the planets that were in his possession is recalculated using the rules mentioned above.
+
 The game lasts until either there are no neutral planets or number of players becomes less than two.
 
 The winner of the game is determined by following procedure.

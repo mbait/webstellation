@@ -4,7 +4,7 @@
 
 == Overview ==
 
-Clients use series of queries in [http://www.json.org/ JSON] format to communicate with a game server.  Each query is a object (an unordered set of name/value pairs) that contains parameters of the query.  A correct query has mandatory parameter `action` containing name of an operation for server to perform.  Set of other parameters depends on the particular action.
+Clients use series of queries in [http://www.json.org/ JSON] format to communicate with a game server.  Each query is an object (an unordered set of name/value pairs) that contains parameters of the query.  A correct query has mandatory parameter `action` containing name of an operation for server to perform.  Set of other parameters depends on a particular action.
 
 A server's response on a query is also a JSON object with mandatory field `result` (containing string "`ok`" or name of an error from the list below) and optional field `message` (containing a text message for a client to show to user).  Again, depending on the type of an action response object must contain additional fields with a result of an operation.
 
@@ -56,7 +56,7 @@ A server's response on a query is also a JSON object with mandatory field `resul
 || `name` || _string_ || Name of the game. ||
 || `map` || _string_ || Name of the map using to play the game. ||
 || `maxPlayers` || _integer_ || Maximal number of allowable players in the game. ||
-|| `players` || _array_ || Names of the players participating the game ordered alphabetically. ||
+|| `players` || _array_ || Names of the players participating the game in order of joining it.  A player's turn is determined by the position of his name in this array. ||
 || `status` || _string_ || Status of the game; equals to "`preparing`", "`playing`", "`finished`", or "`loaded`".||
 
 === `PlanetState` ===
@@ -69,7 +69,7 @@ A server's response on a query is also a JSON object with mandatory field `resul
 || `influence` || _integer_ || Total influence of the player. ||
 
 === `GameState` ===
-|| `active` || _integer_ || Index of player which makes turn. ||
+|| `active` || _integer_ || Index of player which makes turn (as in `players` array of `GameInfo` structure). ||
 || `planets` || _array_ || [#PlanetState PlanetState] structures that represent state of the planets. ||
 || `score` || _array_ || [#PlayerScore PlayerScore] structures that represents score of every player in the game. ||
 

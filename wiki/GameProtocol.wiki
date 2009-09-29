@@ -223,7 +223,7 @@ The server's response on a request is also a JSON object with mandatory field `r
     * `generalError`
   * *`surrender`* — Concede a player's defeat.
   Parameters:
-    * `userName`
+    * `userName` — Name of the surrendered player.
   Outcome:
     _none_
   Possible errors:

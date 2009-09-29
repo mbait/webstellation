@@ -76,14 +76,14 @@ The server's response on a request is also a JSON object with mandatory field `r
 == Queries ==
 
 === Map Related Queries ===
-  * *`getMaps`* — Return the list of registered maps.
+  * *`getMaps`* — List registered maps.
   Parameters:
     _none_
   Outcome:
-    * `maps` — Array of the map names in alphabetical order.
+    * `maps` — Array containing the names of registered maps in alphabetical order.
   Possible errors:
     * `generalError`
-  * *`getMapInfo`* — Return the structure of a map.
+  * *`getMapInfo`* — Return information about a map.
   Parameters:
     * `mapName` — Name of the map.
   Outcome:
@@ -91,7 +91,7 @@ The server's response on a request is also a JSON object with mandatory field `r
   Possible errors:
     * `unknownMap`
     * `generalError`
-  * *`uploadMap`* — Upload a new map to the game server.
+  * *`uploadMap`* — Upload a map to the game server.
   Parameters:
     * `mapInfo` — [#MapInfo MapInfo] structure.
   Outcome:
@@ -102,14 +102,14 @@ The server's response on a request is also a JSON object with mandatory field `r
     * `generalError`
 
 === User Related Queries ===
-  * *`getUsers`* — Return the list of registered users.
+  * *`getUsers`* — List registered users.
   Parameters:
     _none_
   Outcome:
-    * `users` — Array of the registered users' names in alphabetical order.
+    * `users` — Array containing the names of registered users in alphabetical order.
   Possible errors:
     * `generalError`
-  * *`register`* — Register a new user on the game server.
+  * *`register`* — Register a user on the game server.
   Parameters:
     * `userName` — Name of the user.
   Outcome:
@@ -117,7 +117,7 @@ The server's response on a request is also a JSON object with mandatory field `r
   Possible errors:
     * `alreadyTaken`
     * `generalError`
-  * *`joinGame`* — Register a given user to be playing in a game.
+  * *`joinGame`* — Join the specified user to a game.
   Parameters:
     * `userName` — Name of the user.
     * `gameName` — Name of the game.
@@ -130,7 +130,7 @@ The server's response on a request is also a JSON object with mandatory field `r
     * `alreadyMaxPlayers`
     * `alreadyStarted`
     * `generalError`
-  * *`toggleReady`* — Toggle player's readiness to start the game.  Any particular game started only when all of the participating players declare their readiness.
+  * *`toggleReady`* — Toggle player's readiness to start the game he's joined.  A game is started only when all of the participating players have declared their readiness.
   Parameters:
     * `userName` — Name of the user.
   Outcome:
@@ -138,7 +138,7 @@ The server's response on a request is also a JSON object with mandatory field `r
   Possible errors:
     * `unknownUser`
     * `generalError`
-  * *`leaveGame`* — Unregister a player from the game he participating.
+  * *`leaveGame`* — Unregister a player from the game he's participating.
   Parameters:
     * `userName` — Name of the user.
   Outcome:
@@ -147,7 +147,7 @@ The server's response on a request is also a JSON object with mandatory field `r
     * `unknownUser`
     * `notInGame`
     * `generalError`
-  * *`logout`* — Unregister a player from the game server.
+  * *`logout`* — Unregister a user from the game server.
   Parameters:
     * `userName` — Name of the user.
   Outcome:
@@ -157,14 +157,14 @@ The server's response on a request is also a JSON object with mandatory field `r
     * `generalError`
 
 === Game Related Queries ===
-  * *`getGames`* — Return the list of registered games.
+  * *`getGames`* — List registered games.
   Parameters:
     _none_
   Outcome:
-    * `games` — Array of the game names in alphabetical order.
+    * `games` — Array containing the names of registered games in alphabetical order.
   Possible errors:
     * `generalError`
-  * *`getGameInfo`* — Return a game parameters.
+  * *`getGameInfo`* — Return information about a game.
   Parameters:
     * `gameName` — Name of the game.
   Outcome:
@@ -172,12 +172,12 @@ The server's response on a request is also a JSON object with mandatory field `r
   Possible errors:
     * `unknownGame`
     * `generalError`
-  * *`createGame`* — Register a new game on the game server.
+  * *`createGame`* — Create a game on the game server.
   Parameters:
     * `gameName` — Name of the game.
-    * `userName` — Name of the user that creates this game.
-    * `mapName` — Name of the map to use in the game.
-    * `maxPlayers` — Maximal allowable number of players.  Should be an integer in range _1 .. 10_.
+    * `userName` — Name of the user that creates the game.  Note that this user would have the first turn (see description of [#GameInfo GameInfo] structure).
+    * `mapName` — Name of the game map to use.
+    * `maxPlayers` — The maximal allowable number of players in this game; it's an integer in range from 1 to 10.
   Outcome:
     _none_
   Possible errors:
@@ -187,7 +187,7 @@ The server's response on a request is also a JSON object with mandatory field `r
     * `badMaxPlayers`
     * `alreadyInGame`
     * `generalError`
-  * *`loadGame`* — Upload a saved earlier game to the game server.
+  * *`loadGame`* — Upload a saved earlier game.
   Parameters:
     * `userName` — Name of the user that uploads this game.
     * `gameInfo` — [#GameInfo GameInfo] structure.
@@ -213,7 +213,7 @@ The server's response on a request is also a JSON object with mandatory field `r
   * *`move`* — Make a move.
   Parameters:
     * `userName` — Name of the user that makes the move.
-    * `planet` — Number of planet where a new base should be built.  Planets are numbered starting from zero and ordered as in `planets` array of [#MapInfo MapInfo] structure.
+    * `planet` — Index of the planet where a base should be built.  Planets are numbered starting from zero and ordered as in `planets` array of [#MapInfo MapInfo] structure.
   Outcome:
     _none_
   Possible errors:
@@ -221,7 +221,7 @@ The server's response on a request is also a JSON object with mandatory field `r
     * `notYourMove`
     * `badPlanet`
     * `generalError`
-  * *`surrender`* — A player concedes defeat. 
+  * *`surrender`* — Concede a player's defeat.
   Parameters:
     * `userName`
   Outcome:

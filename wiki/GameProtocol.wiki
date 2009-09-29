@@ -4,37 +4,37 @@
 
 == Overview ==
 
-Clients use series of queries in [http://www.json.org/ JSON] format to communicate with a game server.  Each query is an object (an unordered set of name/value pairs) that contains parameters of the query.  A correct query has mandatory parameter `action` containing name of an operation for server to perform.  Set of other parameters depends on a particular action.
+Clients use series of requests in [http://www.json.org/ JSON] format to communicate with a game server.  Requests are sent between a client and a server using POST method of HTTP protocol, where the text of a query is stored as value of the only variable named `r`.  Each query is an object (an unordered set of name/value pairs) that contains parameters of a game operation.  The correct query has mandatory parameter `action` containing the identifier of an operation for the server to perform.  Presence or absence of other parameters depends on a particular action.
 
-A server's response on a query is also a JSON object with mandatory field `result` (containing string "`ok`" or name of an error from the list below) and optional field `message` (containing a text message for a client to show to user).  Again, depending on the type of an action response object must contain additional fields with a result of an operation.
+The server's response on a request is also a JSON object with mandatory field `result` (containing string "`ok`", meaning successful query execution, or the identifier of an error occurred from the list [#Error_Messages below]).  Optionally, any response has field `message` containing a text message to the end user.  Again, depending on the type of an action, response object contains additional fields describing the result of an operation.
 
 == Error Messages ==
 
 === Map Related Errors ===
-|| `mapExists` || A given title is already used to name another map. ||
-|| `unknownMap` || The map with a given name is not registered. ||
-|| `badMapInfo` || Format of a given [#MapInfo MapInfo] structure is incorrect. ||
+|| `mapExists` || The specified title is already used to name another map. ||
+|| `unknownMap` || A map with the specified name is not registered yet. ||
+|| `badMapInfo` || The object of [#MapInfo MapInfo] structure is not formatted correctly. ||
 
 === User Related Errors ===
-|| `alreadyTaken` || A given user name is already taken by another user. ||
-|| `unknownUser` || The user with a given name is not registered. ||
-|| `alreadyInGame` || A given user is already playing a game. ||
-|| `notInGame` || A given user is not playing any game. ||
+|| `alreadyTaken` || The specified user name is already taken by another user. ||
+|| `unknownUser` || A user with the specified name is not registered yet. ||
+|| `alreadyInGame` || The specified user is already playing a game. ||
+|| `notInGame` || The specified user is not playing any game currently. ||
 
 === Game Related Errors ===
-|| `gameExists` || A given title is already used to name another game. ||
-|| `unknownGame` || The game with a given name is not registered. ||
-|| `badGameInfo` || Format of a given [#GameInfo GameInfo] structure is incorrect. ||
-|| `badGameState` || Format of a given [#GameState GameState] structure is incorrect. ||
-|| `badMaxPlayers` || A maximal number of players allowable to compete in a given game is incorrect. ||
-|| `alreadyMaxPlayers` || It is already registered maximal allowable number of players in a given game. ||
-|| `alreadyStarted` || A given game is already started. ||
-|| `notStarted` || A given game is not started yet. ||
-|| `notYourTurn` || It is turn of other player than a given user. ||
-|| `badPlanet` || A planet number given as a move of the player is incorrect. ||
+|| `gameExists` || The specified title is already used to name another game. ||
+|| `unknownGame` || A game with the specified name was not registered yet. ||
+|| `badGameInfo` || The object of [#GameInfo GameInfo] structure is not formatted correctly. ||
+|| `badGameState` || The object of [#GameState GameState] structure is not formatted correctly. ||
+|| `badMaxPlayers` || The specified maximal number of players allowable to compete in a  game is incorrect. ||
+|| `alreadyMaxPlayers` || The number of registered players in a game is already maximal, so it is impossible to join the game currently. ||
+|| `alreadyStarted` || The specified game is already started. ||
+|| `notStarted` || The specified game is not started yet. ||
+|| `notYourTurn` || The specified player could not make a move because it is turn of another player. ||
+|| `badPlanet` || The index of a planet to build a base on is incorrect. ||
 
 === Other Errors ===
-|| `generalError` || Any other error of type that is not listed above. ||
+|| `generalError` || Any error other than that listed above. ||
 
 == Structures ==
 

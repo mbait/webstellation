@@ -178,7 +178,7 @@ The server's response on a request is also a JSON object with mandatory field `r
     * `gameName` — Name of the game.
     * `userName` — Name of the user that creates the game.  Note that this user would have the first turn (see description of [#GameInfo GameInfo] structure).
     * `mapName` — Name of the game map to use.
-    * `maxPlayers` — The maximal allowable number of players in this game; it's an integer in range from 1 to 10.
+    * `maxPlayers` — The maximal allowable number of players in this game; it's an integer in range from 2 to 10.
   Outcome:
     _none_
   Possible errors:

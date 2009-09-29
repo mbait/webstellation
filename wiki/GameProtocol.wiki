@@ -56,7 +56,7 @@ A server's response on a query is also a JSON object with mandatory field `resul
 || `name` || _string_ || Name of the game. ||
 || `map` || _string_ || Name of the map using to play the game. ||
 || `maxPlayers` || _integer_ || Maximal number of allowable players in the game. ||
-|| `players` || _array_ || Names of the players participating the game in order of joining it.  A player's turn is determined by the position of his name in this array. ||
+|| `players` || _array_ || Array of [#PlayerInfo PlayerInfo] structures that represent players of the game.  Players participating the game are listed in the order of joining it.  A player's turn is determined by the position of his name in this array. ||
 || `status` || _string_ || Status of the game; equals to "`preparing`", "`playing`", "`finished`", or "`loaded`".||
 
 === `PlanetState` ===
@@ -106,7 +106,7 @@ A server's response on a query is also a JSON object with mandatory field `resul
   Parameters:
     _none_
   Outcome:
-    * `users` — Array of [#PlayerInfo PlayerInfo] structures ordered lexicographically by users' names.
+    * `users` — Array of the registered users' names in alphabetical order.
   Possible errors:
     * `generalError`
   * *`register`* — Register a new user on the game server.

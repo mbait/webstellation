@@ -39,37 +39,37 @@ The server's response on a request is also a JSON object with mandatory field `r
 == Structures ==
 
 === `PlanetInfo` ===
-|| `x` || _integer_ || X-coordinate of the planet's position on Cartesian plane. ||
-|| `y` || _integer_ || Y-coordinate of the planet's position on Cartesian plane. ||
+|| `x` || _integer_ || X-coordinate of the planet on Cartesian plane. ||
+|| `y` || _integer_ || Y-coordinate of the planet on Cartesian plane. ||
 || `size` || _integer_ || Size of the planet; equals to 1, 2, or 3. ||
-|| `neighbors` || _array_ || Indices of adjacent planets. ||
+|| `neighbors` || _array_ || Indices of the adjacent planets. ||
 
 === `MapInfo` ===
-|| `name` || _string_ || Name of the map. ||
-|| `planets` || _array_ || [#PlanetInfo PlanetInfo] structures that represent a _planar_ graph. ||
+|| `name` || _string_ || Name of the game map. ||
+|| `planets` || _array_ || [#PlanetInfo PlanetInfo] structures that represent the planets.  Each of them forms a vertex in unordered graph.  Position of a vertex uniquely determined by its index and list of the neighbors.  Note that for purposes of visual simplicity a _planar_ graph is desirable. ||
 
 === `PlayerInfo` ===
 || `name` || _string_ || Name of the player. ||
-|| `isReady` || _boolean_ || Readiness of the player. ||
+|| `isReady` || _boolean_ || Readiness of the player to start the game he joined. ||
 
 === `GameInfo` ===
 || `name` || _string_ || Name of the game. ||
-|| `map` || _string_ || Name of the map using to play the game. ||
-|| `maxPlayers` || _integer_ || Maximal number of allowable players in the game. ||
-|| `players` || _array_ || Array of [#PlayerInfo PlayerInfo] structures that represent players of the game.  Players participating the game are listed in the order of joining it.  A player's turn is determined by the position of his name in this array. ||
+|| `map` || _string_ || Name of the game map used. ||
+|| `maxPlayers` || _integer_ || The maximal allowable number of players in the game. ||
+|| `players` || _array_ || Array of [#PlayerInfo PlayerInfo] structures that represent the players.  The players are ordered as they have joined the game (so the player who created the game is always the first one).  A player's turn is determined by the position of his name in this array. ||
 || `status` || _string_ || Status of the game; equals to "`preparing`", "`playing`", "`finished`", or "`loaded`".||
 
 === `PlanetState` ===
-|| `owner` || _integer_ || Index of owner player. ||
-|| `bases` || _integer_ || Number of bases built on the planet; is in range _0 .. «size of the planet»_. ||
+|| `owner` || _integer_ || Index of the player who owns the planet. ||
+|| `bases` || _integer_ || The number of bases built on the planet; lays in range from zero to the size of this planet. ||
 
 === `PlayerScore` ===
-|| `planets` || _integer_ || Number of planets owned by the player. ||
-|| `bases || _integer_ || Number of bases owned by the player. ||
-|| `influence` || _integer_ || Total influence of the player. ||
+|| `planets` || _integer_ || The number of planets owned by the player. ||
+|| `bases || _integer_ || The number of bases owned by the player. ||
+|| `influence` || _integer_ || The total influence of the player. ||
 
 === `GameState` ===
-|| `active` || _integer_ || Index of player which makes turn (as in `players` array of `GameInfo` structure). ||
+|| `active` || _integer_ || Index of the player who makes the turn (as in `players` array of `GameInfo` structure). ||
 || `planets` || _array_ || [#PlanetState PlanetState] structures that represent state of the planets. ||
 || `score` || _array_ || [#PlayerScore PlayerScore] structures that represents score of every player in the game. ||
 

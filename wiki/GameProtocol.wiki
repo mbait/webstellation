@@ -137,6 +137,7 @@ The server's response on a request is also a JSON object with mandatory field `r
     _none_
   Possible errors:
     * `unknownUser`
+    * `notInGame`
     * `generalError`
   * *`leaveGame`* — Unregister a player from the game he's participating.
   Parameters:

@@ -25,7 +25,7 @@ sub db_extract {
 	my $self = shift;
 	for(@_) {
 		if(exists $self->{'dbhash'}->{$_}) {
-			$self->{$_} = thaw $self->{'dbhash'}->{$_};
+			$self->{$_} = thaw $self->{'dbhash'}->{$_} ||= {};
 		}
 		push @{$self->{'dbdata'}}, $_;
 	}
@@ -56,48 +56,100 @@ sub dispatch {
 
 sub register {
 	my $self = shift;
-	$self->db_extract(qw/players playerNames/);
+	$self->db_extract('players');
 	my $args = shift;
 	my $players = $self->{'players'} ||= {};
-	if(exists $players->{$args->{'userName'}}) {
-		return { result => 'alreadyTaken' };
-	}
-	my $playerNames = $self->{'playerNames'} ||= [];
-	push @$playerNames, $args->{'userName'}; 
-	$players->{$args->{'userName'}} = $#$playerNames;
+	return { result => 'alreadyTaken' } if exists $players->{$args->{'userName'}};
+	$players->{$args->{'userName'}} = 0;
 	return { result => 'OK' };
 }
 
 sub logout {
 	my $self = shift;
-	$self->db_extract(qw/players playerNames/);
+	$self->db_extract('players');
 	my $args = shift;
 	my $players = $self->{'players'} ||= {};
-	unless(exists $players->{$args->{'userName'}}) {
-		return { result => 'unknownUser' };
-	}
-	my $playerNames = $self->{'playerNames'} ||= [];
-	splice @$playerNames, $$players{$args->{'userName'}}, 1;
+	return { result => 'unknownUser' }
+		unless exists $players->{$args->{'userName'}};
 	delete $players->{$args->{'userName'}};
 	return { result => 'OK' };
 }
 
 sub getUsers {
 	my $self = shift;
-	$self->db_extract('playerNames');
-	return { users => $self->{'playerNames'}, result => 'OK' };
+	$self->db_extract('players');
+	my $players = $self->{'players'};
+	my @result;
+	for(sort dsort keys %$players) {
+		push @result, { name => $_, isReady => $players->{$_}};
+	}
+	return { users => \@result, result => 'OK' };
+	#return { users => [sort dsort keys %$players], result => 'OK' };
 }
 
-sub loadMap {
+sub uploadMap {
 	my $self = shift;
-	$self->db_extract(qw/maps mapNames/);
+	$self->db_extract('maps');
 	my $maps = $self->{'maps'} ||= {};
 	my $args = shift;
-	return { result => 'mapExists' } if exists $maps->{$args->{'name'}};
-	my $mapNames = $self->{'mapNames'} ||= [];
-	push @$mapNames, $args->{'name'};
-	$maps->{$args->{'name'}} = $#$mapNames;
+	return { result => 'mapExists' } if exists $maps->{$args->{'mapInfo'}->{'name'}};
+	$maps->{$args->{'mapInfo'}->{'name'}} = $args->{'mapInfo'};
 	return { result => 'OK' };
+}
+
+sub getMaps {
+	my $self = shift;
+	$self->db_extract('maps');
+	my $maps = $self->{'maps'} ||= {};
+	my $args = shift;
+	return { maps => [sort dsort keys %$maps], result => 'OK' };
+}
+
+sub getMapInfo {
+	my $self = shift;
+	$self->db_extract('maps');
+	my $maps = $self->{'maps'} ||= {};
+	my $args = shift;
+	return { result => 'unknownMap' } unless exists $maps->{$args->{'mapName'}};
+	return { result => 'OK', mapInfo => $maps->{$args->{'mapName'}}};
+}
+
+sub createGame {
+	my $self = shift;
+	$self->db_extract(qw/games players maps/);
+	my $games = $self->{'games'} ||= {};
+	my $players = $self->{'players'} ||= {};
+	my $maps = $self->{'maps'} ||= {};
+	my $args = shift;
+	return { result => 'unknownUser' } unless exists $players->{$args->{'userName'}};
+	return { result => 'unknownMap' } unless exists $maps->{$args->{'mapName'}};
+	return { result => 'gameExists' } if exists $games->{$args->{'gameName'}};
+
+	$games->{$args->{'gameName'}} = {
+		players => [$args->{'userName'}],
+		name => $args->{'gameName'},
+		map => $args->{'mapName'},
+		maxPlayers => $args->{'maxPlayers'},
+		status => 'preparing'
+	};
+	return { result => 'OK' };
+}
+
+sub joinGame {
+	my $self = shift;
+	$self->db_extract(qw/players games/);
+	my $games = $self->{'games'};
+	my $players = $self->{'players'};
+	my $args = shift;
+	return { result => 'unknownUser' } unless exists $players->{$args->{'userName'}};
+	return { result => 'unknownGame' } unless exists $games->{$args->{'gameName'}};
+	my $game = $games->{$args->{'gameName'}};
+	return { result => 'alreadyMaxPlayers' } if $game->{'maxPlayers'} == length @{$game->{'players'}};
+	return { result => 'alreadyStarted' } unless $game->{'state'} == 'preparing';
+}
+
+sub dsort {
+	return $a cmp $b;
 }
 
 1;

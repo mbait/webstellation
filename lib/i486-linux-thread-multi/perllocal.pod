@@ -42,3 +42,25 @@ C<EXE_FILES: bin/json_xs>
 
 =back
 
+=head2 Thu Oct  1 11:59:52 2009: C<Module> L<Tie::DB_Lock|Tie::DB_Lock>
+
+=over 4
+
+=item *
+
+C<installed into: /home/mbait/webstellation/lib>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.07>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+

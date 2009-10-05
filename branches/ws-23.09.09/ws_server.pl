@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use JSON::XS;
 use File::Temp 'tempfile';
-use WS::Request;
+use Webstellation::Request;
 use Net::HTTP;
 
 use Test::More qw 'no_plan';
@@ -17,8 +17,16 @@ my $host;
 sub wrap {
 	my $result;
 	if($host) {
-		my $r = Net::HTTP->new(Host => 'localhost', PeerPort => 4440);
-		$r->write_request(POST => '/', 'User-Agent' => 'Mozilla/5.0', 'r='.encode_json shift);
+		my $r = Net::HTTP->new(Host => 'localhost', PeerPort => 4440) or die $@;
+		my $data = shift;
+		#print $r->format_request(POST => '/', 'User-Agent' => 'Mozilla/5.0', 'r='.encode_json $data);
+		$r->write_request(
+			POST => '/', 
+			'User-Agent' => 'Mozilla/5.0', 
+			'Content-type' => 'application/x-www-form-urlencoded', 
+			'r='.encode_json $data);
+		my ($code, $msg, %h) = $r->read_response_headers;
+		print "$code\n";
 		while (1) {
 			my $body;
 			my $n = $r->read_entity_body($body, 1024);
@@ -29,7 +37,7 @@ sub wrap {
 		#print "$result\n";
 	}
 	else {
-		my $r = WS::Request->new($fname);
+		my $r = Webstellation::Request->new($fname);
 		$result = $r->dispatch(encode_json shift);
 	}
 	return decode_json $result;
@@ -41,12 +49,12 @@ sub test {
 	my $res = wrap { 
 			action => 'register', userName => 'Jane' 
 		};
-	is($res->{'result'}, 'OK', 'register Jane');
+	is($res->{'result'}, 'ok', 'register Jane');
 
 	$res = wrap {
 			action => 'register', userName => 'Jack'
 		};
-	is($res->{'result'}, 'OK', 'register Jack');
+	is($res->{'result'}, 'ok', 'register Jack');
 
 	$res = wrap {
 			action => 'register', userName => 'Jane'
@@ -56,7 +64,7 @@ sub test {
 	$res = wrap {
 			action => 'logout', userName => 'Jane'
 		};
-	is($res->{'result'}, 'OK', 'logout Jane');
+	is($res->{'result'}, 'ok', 'logout Jane');
 
 	$res = wrap {
 			action => 'logout', userName => 'Jane'
@@ -82,53 +90,53 @@ sub test {
 	$res = wrap {
 		action => 'uploadMap', mapInfo => {
 			name => 'Aldebaran', planets => [
-				{ x => 0, y => 0, size => 3 },
-				{ x => 1, y => 0, size => 1 },
-				{ x => 0, y => 1, size => 1 },
+				{ x => 0, y => 0, size => 3, neighbors => [1] },
+				{ x => 1, y => 0, size => 1, neighbors => [1] },
+				{ x => 0, y => 1, size => 1, neighbors => [1] },
 			]	
 		}
 	};
-	is($res->{'result'}, 'OK', 'upload Aldebaran');
+	is($res->{'result'}, 'ok', 'upload Aldebaran');
 	
 	$res = wrap {
 		action => 'uploadMap', mapInfo => {
 			name => 'NGC 2238', planets => [
-				{ x => 0, y => 0, size => 3 },
-				{ x => 1, y => 0, size => 1 },
-				{ x => 0, y => 1, size => 1 },
+				{ x => 0, y => 0, size => 3, neighbors => [1] },
+				{ x => 1, y => 0, size => 1, neighbors => [1] },
+				{ x => 0, y => 1, size => 1, neighbors => [1] },
 			]	
 		}
 	};
-	is($res->{'result'}, 'OK', 'upload NGC 2238');
+	is($res->{'result'}, 'ok', 'upload NGC 2238');
 
 	$res = wrap {
 		action => 'uploadMap', mapInfo => {
 			name => 'Betelgeuse', planets => [
-				{ x => 0, y => 0, size => 3 },
-				{ x => 1, y => 0, size => 1 },
-				{ x => 0, y => 1, size => 1 },
+				{ x => 0, y => 0, size => 3, neighbors => [1] },
+				{ x => 1, y => 0, size => 1, neighbors => [1] },
+				{ x => 0, y => 1, size => 1, neighbors => [1] },
 			]	
 		}
 	};
-	is($res->{'result'}, 'OK', 'upload Betelgeuse');
+	is($res->{'result'}, 'ok', 'upload Betelgeuse');
 
 	$res = wrap {
 		action => 'uploadMap', mapInfo => {
 			name => 'Cassiopeia', planets => [
-				{ x => 0, y => 0, size => 3 },
-				{ x => 1, y => 0, size => 1 },
-				{ x => 0, y => 1, size => 1 },
+				{ x => 0, y => 0, size => 3, neighbors => [1] },
+				{ x => 1, y => 0, size => 1, neighbors => [1] },
+				{ x => 0, y => 1, size => 1, neighbors => [1] },
 			]	
 		}
 	};
-	is($res->{'result'}, 'OK', 'upload Cassiopeia');
+	is($res->{'result'}, 'ok', 'upload Cassiopeia');
 
 	$res = wrap {
 		action => 'uploadMap', mapInfo => {
 			name => 'Cassiopeia', planets => [
-				{ x => 0, y => 0, size => 3 },
-				{ x => 1, y => 0, size => 1 },
-				{ x => 0, y => 1, size => 1 },
+				{ x => 0, y => 0, size => 3, neighbors => [1] },
+				{ x => 1, y => 0, size => 1, neighbors => [1] },
+				{ x => 0, y => 1, size => 1, neighbors => [1] },
 			]	
 		}
 	};
@@ -143,9 +151,9 @@ sub test {
 		action => 'getMapInfo', mapName => 'Cassiopeia' };
 	is_deeply $res->{'mapInfo'}, {
 		name => 'Cassiopeia', planets => [
-			{ x => 0, y => 0, size => 3 },
-			{ x => 1, y => 0, size => 1 },
-			{ x => 0, y => 1, size => 1 },
+			{ x => 0, y => 0, size => 3, neighbors => [1] },
+			{ x => 1, y => 0, size => 1, neighbors => [1] },
+			{ x => 0, y => 1, size => 1, neighbors => [1] },
 		]	
 	}, 'getMapInfo';
 	
@@ -154,7 +162,7 @@ sub test {
 		mapName => 'Aldebaran', maxPlayers => 3,
 		gameName => 'Game1'
 	};
-	is $res->{'result'}, 'OK', 'createGame';
+	is $res->{'result'}, 'ok', 'createGame';
 
 	$res = wrap {
 		action => 'createGame', userName => 'Ann',
@@ -179,6 +187,9 @@ sub test {
 }
 
 test;
-print "\nREMOTE TESTING\n\n";
-test 'localhost:4440';
+SKIP: {
+	#skip 'not realized';
+	print "\nREMOTE TESTING\n\n";
+	test 'localhost:4440';
+};
 

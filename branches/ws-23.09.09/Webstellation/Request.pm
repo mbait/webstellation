@@ -1,4 +1,4 @@
-package WS::Request;
+package Webstellation::Request;
 
 use strict;
 #use Tie::DB_Lock;
@@ -61,7 +61,7 @@ sub register {
 	my $players = $self->{'players'} ||= {};
 	return { result => 'alreadyTaken' } if exists $players->{$args->{'userName'}};
 	$players->{$args->{'userName'}} = 0;
-	return { result => 'OK' };
+	return { result => 'ok' };
 }
 
 sub logout {
@@ -72,7 +72,7 @@ sub logout {
 	return { result => 'unknownUser' }
 		unless exists $players->{$args->{'userName'}};
 	delete $players->{$args->{'userName'}};
-	return { result => 'OK' };
+	return { result => 'ok' };
 }
 
 sub getUsers {
@@ -83,8 +83,8 @@ sub getUsers {
 	for(sort dsort keys %$players) {
 		push @result, { name => $_, isReady => $players->{$_}};
 	}
-	return { users => \@result, result => 'OK' };
-	#return { users => [sort dsort keys %$players], result => 'OK' };
+	return { users => \@result, result => 'ok' };
+	#return { users => [sort dsort keys %$players], result => 'ok' };
 }
 
 sub uploadMap {
@@ -94,7 +94,7 @@ sub uploadMap {
 	my $args = shift;
 	return { result => 'mapExists' } if exists $maps->{$args->{'mapInfo'}->{'name'}};
 	$maps->{$args->{'mapInfo'}->{'name'}} = $args->{'mapInfo'};
-	return { result => 'OK' };
+	return { result => 'ok' };
 }
 
 sub getMaps {
@@ -102,7 +102,7 @@ sub getMaps {
 	$self->db_extract('maps');
 	my $maps = $self->{'maps'} ||= {};
 	my $args = shift;
-	return { maps => [sort dsort keys %$maps], result => 'OK' };
+	return { maps => [sort dsort keys %$maps], result => 'ok' };
 }
 
 sub getMapInfo {
@@ -111,7 +111,7 @@ sub getMapInfo {
 	my $maps = $self->{'maps'} ||= {};
 	my $args = shift;
 	return { result => 'unknownMap' } unless exists $maps->{$args->{'mapName'}};
-	return { result => 'OK', mapInfo => $maps->{$args->{'mapName'}}};
+	return { result => 'ok', mapInfo => $maps->{$args->{'mapName'}}};
 }
 
 sub createGame {
@@ -132,7 +132,7 @@ sub createGame {
 		maxPlayers => $args->{'maxPlayers'},
 		status => 'preparing'
 	};
-	return { result => 'OK' };
+	return { result => 'ok' };
 }
 
 sub joinGame {

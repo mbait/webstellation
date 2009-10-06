@@ -60,7 +60,7 @@ sub register {
 	my $args = shift;
 	my $players = $self->{'players'} ||= {};
 	return { result => 'alreadyTaken' } if exists $players->{$args->{'userName'}};
-	$players->{$args->{'userName'}} = 0;
+	$players->{$args->{'userName'}} = {};
 	return { result => 'ok' };
 }
 
@@ -78,9 +78,7 @@ sub logout {
 sub getUsers {
 	my $self = shift;
 	$self->db_extract('players');
-	my $players = $self->{'players'};
-	my @result;
-	return { users => [sort dsort keys %$players], result => 'ok' };
+	return { users => [sort dsort keys %{$self->{'players'}}], result => 'ok' };
 }
 
 sub uploadMap {
@@ -142,6 +140,20 @@ sub joinGame {
 	my $game = $games->{$args->{'gameName'}};
 	return { result => 'alreadyMaxPlayers' } if $game->{'maxPlayers'} == length @{$game->{'players'}};
 	return { result => 'alreadyStarted' } unless $game->{'state'} == 'preparing';
+}
+
+sub getGames {
+	my $self = shift;
+	$self->db_extract('games');
+	return { result => 'ok', games => sort dsort keys %{$self->{'games'}}};
+}
+
+sub getGameInfo {
+	my $self = shift;
+	$self->db_extract('games');
+	my $args = shift;
+	return { result => 'unknownGame' } unless exists $self->{'games'}->{$args->{'gameName'}};
+	return { result => 'ok', game => $self->{'games'}->{$args->{'gameName'}}};
 }
 
 sub dsort {

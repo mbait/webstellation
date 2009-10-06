@@ -5,7 +5,7 @@ use strict;
 use Storable qw/freeze thaw/;
 use DB_File;
 use Data::Dumper;
-use JSON::XS;
+use JSON;
 
 sub new {
 	my $invocant = shift;

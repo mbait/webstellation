@@ -65,7 +65,7 @@ The server's response on a request is also a JSON object with mandatory field `r
 
 === `PlayerScore` ===
 || `planets` || _integer_ || The number of planets owned by the player. ||
-|| `bases || _integer_ || The number of bases owned by the player. ||
+|| `bases` || _integer_ || The number of bases owned by the player. ||
 || `influence` || _integer_ || The total influence of the player. ||
 
 === `GameState` ===

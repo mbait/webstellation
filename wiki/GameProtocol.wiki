@@ -87,7 +87,7 @@ The server's response on a request is also a JSON object with mandatory field `r
   Parameters:
     * `mapName` — Name of the map.
   Outcome:
-    * `mapInfo` — [#MapInfo MapInfo] structure.
+    * `map` — [#MapInfo MapInfo] structure.
   Possible errors:
     * `unknownMap`
     * `generalError`

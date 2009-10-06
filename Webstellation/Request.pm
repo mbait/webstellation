@@ -80,11 +80,7 @@ sub getUsers {
 	$self->db_extract('players');
 	my $players = $self->{'players'};
 	my @result;
-	for(sort dsort keys %$players) {
-		push @result, { name => $_, isReady => $players->{$_}};
-	}
-	return { users => \@result, result => 'ok' };
-	#return { users => [sort dsort keys %$players], result => 'ok' };
+	return { users => [sort dsort keys %$players], result => 'ok' };
 }
 
 sub uploadMap {

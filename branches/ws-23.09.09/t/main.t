@@ -26,7 +26,7 @@ sub wrap {
 			'Content-type' => 'application/x-www-form-urlencoded', 
 			'r='.encode_json $data);
 		my ($code, $msg, %h) = $r->read_response_headers;
-		print "$code\n";
+		#print "$code\n";
 		while (1) {
 			my $body;
 			my $n = $r->read_entity_body($body, 1024);
@@ -81,18 +81,15 @@ sub test {
 			action => 'getUsers'
 		};
 	#print Dumper (sort {$a cmp $b} @{$res->{'users'}});
-	is_deeply $res->{'users'}, [
-		{ name =>'Angie', isReady => 0 }, 
-		{ name =>'Jack', isReady => 0 }, 
-		{ name => 'John', isReady => 0 }
-	], 'getUsers';	
+	#print Dumper $res->{'users'};
+	is_deeply $res->{'users'}, [ 'Angie', 'Jack',  'John', ], 'getUsers';	
 
 	$res = wrap {
 		action => 'uploadMap', mapInfo => {
 			name => 'Aldebaran', planets => [
-				{ x => 0, y => 0, size => 3, neighbors => [1] },
-				{ x => 1, y => 0, size => 1, neighbors => [1] },
-				{ x => 0, y => 1, size => 1, neighbors => [1] },
+				{ x => 0, y => 0, size => 3, neighbors => [] },
+				{ x => 1, y => 0, size => 1, neighbors => [] },
+				{ x => 0, y => 1, size => 1, neighbors => [] },
 			]	
 		}
 	};
@@ -101,9 +98,9 @@ sub test {
 	$res = wrap {
 		action => 'uploadMap', mapInfo => {
 			name => 'NGC 2238', planets => [
-				{ x => 0, y => 0, size => 3, neighbors => [1] },
+				{ x => 0, y => 0, size => 3, neighbors => [3] },
 				{ x => 1, y => 0, size => 1, neighbors => [1] },
-				{ x => 0, y => 1, size => 1, neighbors => [1] },
+				{ x => 0, y => 1, size => 1, neighbors => [2] },
 			]	
 		}
 	};

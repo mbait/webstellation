@@ -46,7 +46,15 @@ sub dispatch {
 	my $res;
 	{
 		no strict 'refs';
-		$res = $args->{'action'}->($self, $args);
+		my $aa = $args->{action};
+		my %h = %{*{"Webstellation::Request::"}};
+		#print "$_ " for keys %h;
+		if (exists $h{$aa}) {  
+			$res = $args->{'action'}->($self, $args);
+		}
+		else {
+			$res = { result => 'generalError' };
+		}
 	}
 	$self->db_close;
 	return encode_json $res;
@@ -120,9 +128,9 @@ sub createGame {
 	return { result => 'gameExists' } if exists $games->{$args->{'gameName'}};
 
 	$games->{$args->{'gameName'}} = {
-		players => [$args->{'userName'}],
+		players => [{ name => $args->{'userName'} }],
 		name => $args->{'gameName'},
-		map => $args->{'mapName'},
+		'map' => $args->{'mapName'},
 		maxPlayers => $args->{'maxPlayers'},
 		status => 'preparing'
 	};
@@ -145,7 +153,7 @@ sub joinGame {
 sub getGames {
 	my $self = shift;
 	$self->db_extract('games');
-	return { result => 'ok', games => sort dsort keys %{$self->{'games'}}};
+	return { result => 'ok', games => [sort dsort keys %{$self->{'games'}}]};
 }
 
 sub getGameInfo {

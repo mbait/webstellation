@@ -76,158 +76,180 @@ The server's response on a request is also a JSON object with mandatory field `r
 == Queries ==
 
 === Map Related Queries ===
-  * *`getMaps`* — List registered maps.
-  Parameters:
-    _none_
-  Outcome:
-    * `maps` — Array containing the names of registered maps in alphabetical order.
-  Possible errors:
-    * `generalError`
-  * *`getMapInfo`* — Return information about a map.
-  Parameters:
-    * `mapName` — Name of the map.
-  Outcome:
-    * `map` — [#MapInfo MapInfo] structure.
-  Possible errors:
-    * `unknownMap`
-    * `generalError`
-  * *`uploadMap`* — Upload a map to the game server.
-  Parameters:
-    * `mapInfo` — [#MapInfo MapInfo] structure.
-  Outcome:
-    _none_
-  Possible errors:
-    * `mapExists`
-    * `badMapInfo`
-    * `generalError`
+
+==== `getMaps` ====
+
+List registered maps.
+
+|| *`<`* || `maps` || _array_ || Names of already registered maps ordered lexicographically. ||
+
+|| *`!`* || `generalError` ||
+
+==== `getMapInfo` ====
+
+Return information about a map.
+
+|| *`>`* || `mapName` || _string_ || Name of the map. ||
+
+|| *`<`* || `map` || _[#MapInfo MapInfo]_ || Description of the map. ||
+
+|| *`!`* || `unknownMap` ||
+|| *`!`* || `generalError` ||
+
+==== `uploadMap` ====
+
+Upload a map to the game server.
+
+|| *`>`* || `mapInfo` || _[#MapInfo MapInfo]_ || Description of the map to upload. ||
+
+|| *`!`* || `mapExists` ||
+|| *`!`* || `badMapInfo` ||
+|| *`!`* || `generalError` ||
 
 === User Related Queries ===
-  * *`getUsers`* — List registered users.
-  Parameters:
-    _none_
-  Outcome:
-    * `users` — Array containing the names of registered users in alphabetical order.
-  Possible errors:
-    * `generalError`
-  * *`register`* — Register a user on the game server.
-  Parameters:
-    * `userName` — Name of the user.
-  Outcome:
-    _none_
-  Possible errors:
-    * `alreadyTaken`
-    * `generalError`
-  * *`joinGame`* — Join the specified user to a game.
-  Parameters:
-    * `userName` — Name of the user.
-    * `gameName` — Name of the game.
-  Outcome:
-    _none_
-  Possible errors:
-    * `unknownUser`
-    * `unknownGame`
-    * `alreadyInGame`
-    * `alreadyMaxPlayers`
-    * `alreadyStarted`
-    * `generalError`
-  * *`toggleReady`* — Toggle player's readiness to start the game he's joined.  A game is started only when all of the participating players have declared their readiness.
-  Parameters:
-    * `userName` — Name of the user.
-  Outcome:
-    _none_
-  Possible errors:
-    * `unknownUser`
-    * `notInGame`
-    * `generalError`
-  * *`leaveGame`* — Unregister a player from the game he's participating.
-  Parameters:
-    * `userName` — Name of the user.
-  Outcome:
-    _none_
-  Possible errors:
-    * `unknownUser`
-    * `notInGame`
-    * `generalError`
-  * *`logout`* — Unregister a user from the game server.
-  Parameters:
-    * `userName` — Name of the user.
-  Outcome:
-    _none_
-  Possible errors:
-    * `unknownUser`
-    * `generalError`
+
+==== `getUsers` ====
+
+List registered users.
+
+|| *`<`* || `users` || _array_ || Names of already registered users ordered lexicogrphically. ||
+
+|| *`!`* || `generalError` ||
+
+==== `register` ====
+
+Register a user on the game server.
+
+|| *`>`* || `userName` || _string_ || Name of the user. ||
+
+|| *`!`* || `alreadyTaken` ||
+|| *`!`* || `generalError` ||
+
+==== `joinGame` ====
+
+Join the specified user to a game.
+
+|| *`>`* || `userName` || _string_ || Name of the user. ||
+|| *`>`* || `gameName` || _string_ || Name of the game. ||
+
+|| *`!`* || `unknownUser` ||
+|| *`!`* || `unknownGame` ||
+|| *`!`* || `alreadyInGame` ||
+|| *`!`* || `alreadyMaxPlayers` ||
+|| *`!`* || `alreadyStarted` ||
+|| *`!`* || `generalError` ||
+
+==== `toggleReady` ====
+
+Toggle player's readiness to start the game he's joined.  A game is started only when all of the participating players have declared their readiness.
+
+|| *`>`* || `userName` || _string_ || Name of the user. ||
+
+|| *`!`* || `unknownUser` ||
+|| *`!`* || `notInGame` ||
+|| *`!`* || `generalError` ||
+
+==== `leaveGame` ====
+
+Unregister a player from the game he's participating.
+
+|| *`>`* || `userName` || _string_ || Name of the user. ||
+
+|| *`!`* || `unknownUser` ||
+|| *`!`* || `notInGame` ||
+|| *`!`* || `generalError` ||
+
+==== `logout` ====
+
+Unregister a user from the game server.
+
+|| *`>`* || `userName` || _string_ || Name of the user. ||
+
+|| *`!`* || `unknownUser` ||
+|| *`!`* || `generalError` ||
 
 === Game Related Queries ===
-  * *`getGames`* — List registered games.
-  Parameters:
-    _none_
-  Outcome:
-    * `games` — Array containing the names of registered games in alphabetical order.
-  Possible errors:
-    * `generalError`
-  * *`getGameInfo`* — Return information about a game.
-  Parameters:
-    * `gameName` — Name of the game.
-  Outcome:
-    * `game` — [#GameInfo GameInfo] structure.
-  Possible errors:
-    * `unknownGame`
-    * `generalError`
-  * *`createGame`* — Create a game on the game server.
-  Parameters:
-    * `gameName` — Name of the game.
-    * `userName` — Name of the user that creates the game.  Note that this user would have the first turn (see description of [#GameInfo GameInfo] structure).
-    * `mapName` — Name of the game map to use.
-    * `maxPlayers` — The maximal allowable number of players in this game; it's an integer in range from 2 to 10.
-  Outcome:
-    _none_
-  Possible errors:
-    * `gameExists`
-    * `unknownUser`
-    * `unknownMap`
-    * `badMaxPlayers`
-    * `alreadyInGame`
-    * `generalError`
-  * *`loadGame`* — Upload a saved earlier game.
-  Parameters:
-    * `userName` — Name of the user that uploads this game.
-    * `gameInfo` — [#GameInfo GameInfo] structure.
-    * `gameState` — [#GameState GameState] structure.
-  Outcome:
-    _none_
-  Possible errors:
-    * `unknownUser`
-    * `gameExists`
-    * `badGameInfo`
-    * `badGameState`
-    * `alreadyInGame`
-    * `generalError`
-  * *`getGameState`* — Return the state of a game playing.
-  Parameters:
-    * `gameName` — Name of the game.
-  Outcome:
-    * `game` — [#GameState GameState] structure.
-  Possible errors:
-    * `unknownGame`
-    * `notStarted`
-    * `generalError`
-  * *`move`* — Make a move.
-  Parameters:
-    * `userName` — Name of the user that makes the move.
-    * `planet` — Index of the planet where a base should be built.  Planets are numbered starting from zero and ordered as in `planets` array of [#MapInfo MapInfo] structure.
-  Outcome:
-    _none_
-  Possible errors:
-    * `unknownUser`
-    * `notYourMove`
-    * `badPlanet`
-    * `generalError`
-  * *`surrender`* — Concede a player's defeat.
-  Parameters:
-    * `userName` — Name of the surrendered player.
-  Outcome:
-    _none_
-  Possible errors:
-    * `unknownUser`
-    * `notInGame`
-    * `generalError`
+
+==== `getGames` ====
+
+List registered games.
+
+|| *`<`* || `games` || _array_ || Names of already registered games ordered lexicographically. ||
+
+|| *`!`* || `generalError` ||
+
+==== `getGameInfo` ====
+
+Return information about a game.
+
+|| *`>`* || `gameName` || _string_ || Name of the game. ||
+
+|| *`<`* || `game` || _[#GameInfo GameInfo]_ || Description of the game. ||
+
+|| *`!`* || `unknownGame` ||
+|| *`!`* || `generalError` ||
+
+==== `createGame` ====
+
+Create a game on the game server.
+
+|| *`>`* || `gameName` || _string_ || Name of the game. ||
+|| *`>`* || `userName` || _string_ || Name of the user that creates the game.  Note that this user would have the first turn (see description of [#GameInfo GameInfo] structure). ||
+|| *`>`* || `mapName` || _string_ || Name of the game map to use. ||
+|| *`>`* || `maxPlayers` || _integer_ || The maximal allowable number of players in this game; should be in range from 2 to 10. ||
+
+|| *`!`* || `gameExists` ||
+|| *`!`* || `unknownUser` ||
+|| *`!`* || `unknownMap` ||
+|| *`!`* || `badMaxPlayers` ||
+|| *`!`* || `alreadyInGame` ||
+|| *`!`* || `generalError` ||
+
+==== `loadGame` ====
+
+Upload a saved earlier game.
+
+|| *`>`* || `userName` || _string_ || Name of the user that uploads this game. ||
+|| *`>`* || `gameInfo` || _[#GameInfo GameInfo]_ || Description of the game. ||
+|| *`>`* || `gameState` || _[#GameState GameState]_ || State of the game at the moment of saving. ||
+
+|| *`!`* || `unknownUser` ||
+|| *`!`* || `gameExists` ||
+|| *`!`* || `badGameInfo` ||
+|| *`!`* || `badGameState` ||
+|| *`!`* || `alreadyInGame` ||
+|| *`!`* || `generalError` ||
+
+==== `getGameState` ====
+
+Return the state of a game playing.
+
+|| *`>`* || `gameName` || _string_ || Name of the game. ||
+
+|| *`<`* || `game` || _[#GameState GameState]_ || Description of the current state of the game. ||
+
+|| *`!`* || `unknownGame` ||
+|| *`!`* || `notStarted` ||
+|| *`!`* || `generalError` ||
+
+==== `move` ====
+
+Make a move.
+
+|| *`>`* || `userName` || _string_ || Name of the user that makes the move. ||
+|| *`>`* || `planet` || _integer_ || Index of the planet where new base should be built.  Planets are numbered starting from zero and ordered as in `planets` array of [#MapInfo MapInfo] structure. ||
+
+|| *`!`* || `unknownUser` ||
+|| *`!`* || `notYourMove` ||
+|| *`!`* || `badPlanet` ||
+|| *`!`* || `generalError` ||
+
+==== `surrender` ====
+
+Concede a player's defeat.
+
+|| *`>`* || `userName` || _string_ || Name of the surrendered player. ||
+
+|| *`!`* || `unknownUser` ||
+|| *`!`* || `notInGame` ||
+|| *`!`* || `generalError` ||

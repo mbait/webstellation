@@ -93,6 +93,20 @@ A map is represented by undirected, unweighted graph which is a model of the sta
 
 == Queries ==
 
+Query is entirely defined by set of its input and output parameters, as well as a list of types of errors that may occur during processing.
+
+All the queries has parameters:
+|| *`>`* || `action` || _string_ || Name of the action to execute from the list below; all other parameters are depend on it. ||
+
+|| *`<`* || `result` || _string_ || "`ok`" or [#Error_Messages error identifier]. ||
+|| *`<`* || `message` || _string_ || Descriptive text. ||
+
+Regardless of the type of a query errors of these types could occur:
+|| *`!`* || `formatError` ||
+|| *`!`* || `generalError` ||
+
+If errors of several types occurred at the same time, then the only one of them is reported, that that listed earlier in the list of errors of the processing query.  `formatError` is always first type in list of error types of a query, and `generalError` is always last one.  Other possible types of errors are listed below for each action.
+
 === Map Related Queries ===
 
 ==== `getMaps` ====
@@ -100,8 +114,6 @@ A map is represented by undirected, unweighted graph which is a model of the sta
 List registered maps.
 
 || *`<`* || `maps` || _array_ || Names of already registered maps ordered lexicographically. ||
-
-|| *`!`* || `generalError` ||
 
 ==== `getMapInfo` ====
 
@@ -112,7 +124,6 @@ Return information about a map.
 || *`<`* || `map` || _[#MapInfo MapInfo]_ || Description of the map. ||
 
 || *`!`* || `unknownMap` ||
-|| *`!`* || `generalError` ||
 
 ==== `uploadMap` ====
 
@@ -122,7 +133,6 @@ Upload a map to the game server.
 
 || *`!`* || `mapExists` ||
 || *`!`* || `badMapInfo` ||
-|| *`!`* || `generalError` ||
 
 === User Related Queries ===
 
@@ -132,8 +142,6 @@ List registered users.
 
 || *`<`* || `users` || _array_ || Names of already registered users ordered lexicogrphically. ||
 
-|| *`!`* || `generalError` ||
-
 ==== `register` ====
 
 Register a user on the game server.
@@ -141,7 +149,6 @@ Register a user on the game server.
 || *`>`* || `userName` || _string_ || Name of the user. ||
 
 || *`!`* || `alreadyTaken` ||
-|| *`!`* || `generalError` ||
 
 ==== `joinGame` ====
 
@@ -151,11 +158,10 @@ Join the specified user to a game.
 || *`>`* || `gameName` || _string_ || Name of the game. ||
 
 || *`!`* || `unknownUser` ||
-|| *`!`* || `unknownGame` ||
 || *`!`* || `alreadyInGame` ||
+|| *`!`* || `unknownGame` ||
 || *`!`* || `alreadyMaxPlayers` ||
 || *`!`* || `alreadyStarted` ||
-|| *`!`* || `generalError` ||
 
 ==== `toggleReady` ====
 
@@ -165,7 +171,6 @@ Toggle player's readiness to start the game he's joined.  A game is started only
 
 || *`!`* || `unknownUser` ||
 || *`!`* || `notInGame` ||
-|| *`!`* || `generalError` ||
 
 ==== `leaveGame` ====
 
@@ -175,7 +180,6 @@ Unregister a player from the game he's participating.
 
 || *`!`* || `unknownUser` ||
 || *`!`* || `notInGame` ||
-|| *`!`* || `generalError` ||
 
 ==== `logout` ====
 
@@ -184,7 +188,6 @@ Unregister a user from the game server.
 || *`>`* || `userName` || _string_ || Name of the user. ||
 
 || *`!`* || `unknownUser` ||
-|| *`!`* || `generalError` ||
 
 === Game Related Queries ===
 
@@ -193,8 +196,6 @@ Unregister a user from the game server.
 List registered games.
 
 || *`<`* || `games` || _array_ || Names of already registered games ordered lexicographically. ||
-
-|| *`!`* || `generalError` ||
 
 ==== `getGameInfo` ====
 
@@ -205,7 +206,6 @@ Return information about a game.
 || *`<`* || `game` || _[#GameInfo GameInfo]_ || Description of the game. ||
 
 || *`!`* || `unknownGame` ||
-|| *`!`* || `generalError` ||
 
 ==== `createGame` ====
 
@@ -221,7 +221,6 @@ Create a game on the game server.
 || *`!`* || `unknownMap` ||
 || *`!`* || `badMaxPlayers` ||
 || *`!`* || `alreadyInGame` ||
-|| *`!`* || `generalError` ||
 
 ==== `loadGame` ====
 
@@ -231,12 +230,11 @@ Upload a saved earlier game.
 || *`>`* || `gameInfo` || _[#GameInfo GameInfo]_ || Description of the game. ||
 || *`>`* || `gameState` || _[#GameState GameState]_ || State of the game at the moment of saving. ||
 
-|| *`!`* || `unknownUser` ||
 || *`!`* || `gameExists` ||
+|| *`!`* || `unknownUser` ||
 || *`!`* || `badGameInfo` ||
 || *`!`* || `badGameState` ||
 || *`!`* || `alreadyInGame` ||
-|| *`!`* || `generalError` ||
 
 ==== `getGameState` ====
 
@@ -248,7 +246,6 @@ Return the state of a game playing.
 
 || *`!`* || `unknownGame` ||
 || *`!`* || `notStarted` ||
-|| *`!`* || `generalError` ||
 
 ==== `move` ====
 
@@ -258,9 +255,8 @@ Make a move.
 || *`>`* || `planet` || _integer_ || Index of the planet where new base should be built.  Planets are numbered starting from zero and ordered as in `planets` array of [#MapInfo MapInfo] structure. ||
 
 || *`!`* || `unknownUser` ||
-|| *`!`* || `notYourMove` ||
 || *`!`* || `badPlanet` ||
-|| *`!`* || `generalError` ||
+|| *`!`* || `notYourMove` ||
 
 ==== `surrender` ====
 
@@ -270,4 +266,3 @@ Concede a player's defeat.
 
 || *`!`* || `unknownUser` ||
 || *`!`* || `notInGame` ||
-|| *`!`* || `generalError` ||

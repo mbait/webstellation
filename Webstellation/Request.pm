@@ -6,6 +6,7 @@ use Storable qw/freeze thaw/;
 use DB_File;
 use Data::Dumper;
 use JSON::XS;
+use Data::Dumper;
 
 my $RESULT_OK = 'ok';
 my ($MIN_PLAYERS, $MAX_PLAYERS) = (2, 10);
@@ -86,7 +87,7 @@ sub delete {
 
 sub dispatch { 
 	my ($self, $data) = @_;
-	return encode_json { result => 'generalError', message => "$@" }
+	return encode_json { result => 'formatError', message => "$@" }
 		unless eval { $data = decode_json $data };
 	return encode_json { result => 'generalError', message => 'Action is undefined' }
 		unless exists $data->{action};
@@ -119,7 +120,7 @@ sub clear {
 sub register {
 	my ($self, $args) = @_;
 	my $player = $self->add(players => $args->{userName}) or return { result => $@ };
-	$$player = { isReady => 0 };
+	$$player = { game => undef };
 	return { result => $RESULT_OK };
 }
 
@@ -135,14 +136,37 @@ sub getUsers {
 }
 
 sub joinGame {
+	my ($self, $args) = @_;
+	my ($user, $game) = @{$args->{qw/userName gameName/}};
+	$self->exists(players => $user, games => $game) or return { result => $@ };
+	return { result => 'alreadyInGame' } if defined $self->players->{$user}->{game};
+	$game = $self->games->{$game};
+	return { result => 'alreadyMaxPlayers' } if $game->{maxPlayers} == @{$game->{players}};
+	return { result => 'alreadyStarted' } if $game->{status} eq 'playing';
+	push @{$game->{players}}, { name => $user, isReady => 0 };	
+	$self->players->{$user}->{game} = $game->{name};
 	return { result => $RESULT_OK };
 }
 
 sub toggleReady {
+	my ($self, $args) = @_;
+	my $user = $args->{userName};
+	$self->exists(players => $user) or return { result => $@ };
+	return { result => 'notInGame' } unless defined $self->players->{$user}->{game};
+	my $game = $self->games->{$self->players->{$user}->{game}}->{players};
+	my %players = map { $_->{name} => $_ } @$game;
+	++($players{$user}->{isReady} *= -1);
 	return { result => $RESULT_OK };
 }
 
 sub leaveGame {
+	my ($self, $args) = @_;
+	my $user = $args->{userName};
+	$self->exists(players => $user) or return { result => $@ };
+	return { result => 'notInGame' } unless defined $self->players->{$user}->{game};
+	my $game = $self->games->{$self->players->{$user}->{game}}->{players};
+	$game->{players} = [ grep { ! $_->{name} eq $user } @{$game->{players}} ];
+	$self->players->{$user}->{game} = undef;
 	return { result => $RESULT_OK };
 }
 

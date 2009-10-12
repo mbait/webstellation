@@ -5,167 +5,208 @@ use strict;
 use Storable qw/freeze thaw/;
 use DB_File;
 use Data::Dumper;
-use JSON;
+use JSON::XS;
+
+my $RESULT_OK = 'ok';
+my ($MIN_PLAYERS, $MAX_PLAYERS) = (2, 10);
+my %unique_error = (
+	games => 'gameExists',
+	players	=> 'alreadyTaken',
+	maps => 'mapExists' 
+);
+my %exists_error = (
+	games => 'unknownGame',
+	maps => 'unknownMap',
+	players => 'unknownUser'
+);
+
+sub mysort {
+	die;
+	return sort {$a cmp $b} shift;
+}
 
 sub new {
 	my $invocant = shift;
 	my $class = ref($invocant) || $invocant;
-	my $self = { dbfile => shift || 'data'};
+
+	die "Database file must be specified!" unless @_;
+	my $self = { dbfile => shift };
 	return bless $self, $class;
 }
 
-sub db_open {
+sub AUTOLOAD : lvalue {
 	my $self = shift;
-	my %dbhash;
-	tie(%dbhash, 'DB_File', $self->{'dbfile'});
-	$self->{'dbhash'} = \%dbhash;
+	my ($name) = reverse split /::/, our $AUTOLOAD;
+	return $self if $name eq 'DESTROY';
+	
+	unless (exists $self->{$name}) {
+		push @{$self->{dbdata}}, $name; 
+		if(exists $self->{dbhash}->{$name}) { $self->{$name} = thaw $self->{dbhash}->{$name} }
+		else { $self->{$name} = {} }
+	}
+	return $self->{$name};
 }
 
-sub db_extract {
-	my $self = shift;
-	for(@_) {
-		if(exists $self->{'dbhash'}->{$_}) {
-			$self->{$_} = thaw $self->{'dbhash'}->{$_} ||= {};
+sub exists {
+	my ($self, %values) = @_;
+	for(keys %values) {
+		unless(exists $self->$_->{$values{$_}}) {
+			$@ = $exists_error{$_};
+			return 0;
 		}
-		push @{$self->{'dbdata'}}, $_;
 	}
+	return 1;
 }
 
-sub db_close {
-	my $self = shift;
-	for(@{$self->{'dbdata'}}) {
-		$self->{'dbhash'}->{$_} = freeze $self->{$_};
+sub add {
+	my ($self, %args) = @_;
+	my @result;
+	for(keys %args) {
+		if(exists $self->$_->{$args{$_}}) {
+			$@ = $unique_error{$_};
+			return undef;
+		}
+		push @result, \($self->$_->{$args{$_}} = undef);
 	}
-	untie %{$self->{'dbhash'}};
+	if(scalar @result > 1) { return @result; }
+	else { return shift @result; }
 }
 
-sub dispatch {
-	my $self = shift;
-	my $args = decode_json shift;
-	$self->db_open;
-	my $res;
+sub delete {
+	my ($self, %values) = @_;
+	for(keys %values) {
+		unless (exists $self->$_->{$values{$_}}) {
+			$@ = $exists_error{$_};
+			return 0;
+		}
+		delete $self->$_->{$values{$_}};
+	}
+	return 1;
+}
+
+sub dispatch { 
+	my ($self, $data) = @_;
+	return encode_json { result => 'generalError', message => "$@" }
+		unless eval { $data = decode_json $data };
+	return encode_json { result => 'generalError', message => 'Action is undefined' }
+		unless exists $data->{action};
+
+	my %dbhash;
+	tie %dbhash, 'DB_File', $self->{dbfile} or die $@;
+	$self->{dbhash} = \%dbhash;
+	$self->{dbdata} = ();
+	my $result;
 	{
 		no strict 'refs';
-		my $aa = $args->{action};
-		my %h = %{*{"Webstellation::Request::"}};
-		#print "$_ " for keys %h;
-		if (exists $h{$aa}) {  
-			$res = $args->{'action'}->($self, $args);
-		}
-		else {
-			$res = { result => 'generalError' };
-		}
+		$result = $data->{action}->($self, $data);
 	}
-	$self->db_close;
-	return encode_json $res;
+	$dbhash{$_} = freeze $self->{$_} for @{$self->{dbdata}};
+	untie %dbhash;
+	return encode_json $result;
 }
 
-# Request procedures
+# Request methods
+
+sub clear {
+	no strict 'refs';
+	my $self = shift;
+	#$self->{dbhash}->{$_} = {} for qw/players games maps/;
+	return { result => $RESULT_OK }; 
+}
+
+# User-related queries
 
 sub register {
-	my $self = shift;
-	$self->db_extract('players');
-	my $args = shift;
-	my $players = $self->{'players'} ||= {};
-	return { result => 'alreadyTaken' } if exists $players->{$args->{'userName'}};
-	$players->{$args->{'userName'}} = {};
-	return { result => 'ok' };
+	my ($self, $args) = @_;
+	my $player = $self->add(players => $args->{userName}) or return { result => $@ };
+	$$player = { isReady => 0 };
+	return { result => $RESULT_OK };
 }
 
 sub logout {
-	my $self = shift;
-	$self->db_extract('players');
-	my $args = shift;
-	my $players = $self->{'players'} ||= {};
-	return { result => 'unknownUser' }
-		unless exists $players->{$args->{'userName'}};
-	delete $players->{$args->{'userName'}};
-	return { result => 'ok' };
+	my ($self, $args) = @_;
+	$self->delete(players => $args->{userName}) or return { result => $@ };
+	return { result => $RESULT_OK };
 }
 
 sub getUsers {
 	my $self = shift;
-	$self->db_extract('players');
-	return { users => [sort dsort keys %{$self->{'players'}}], result => 'ok' };
+	return { result => $RESULT_OK, users => [ sort {$a cmp $b } keys %{$self->players}] };
 }
 
+sub joinGame {
+	return { result => $RESULT_OK };
+}
+
+sub toggleReady {
+	return { result => $RESULT_OK };
+}
+
+sub leaveGame {
+	return { result => $RESULT_OK };
+}
+
+# Map-related queries
+
 sub uploadMap {
-	my $self = shift;
-	$self->db_extract('maps');
-	my $maps = $self->{'maps'} ||= {};
-	my $args = shift;
-	return { result => 'mapExists' } if exists $maps->{$args->{'mapInfo'}->{'name'}};
-	$maps->{$args->{'mapInfo'}->{'name'}} = $args->{'mapInfo'};
-	return { result => 'ok' };
+	my ($self, $args) = @_;
+	my $map = $self->add(maps => $args->{mapInfo}->{name}) or return { result => $@ };
+	$$map = $args->{mapInfo};
+	return { result => $RESULT_OK };
 }
 
 sub getMaps {
 	my $self = shift;
-	$self->db_extract('maps');
-	my $maps = $self->{'maps'} ||= {};
-	my $args = shift;
-	return { maps => [sort dsort keys %$maps], result => 'ok' };
+	return { result => $RESULT_OK, maps => [ sort {$a cmp $b} keys %{$self->maps}] };
 }
 
 sub getMapInfo {
-	my $self = shift;
-	$self->db_extract('maps');
-	my $maps = $self->{'maps'} ||= {};
-	my $args = shift;
-	return { result => 'unknownMap' } unless exists $maps->{$args->{'mapName'}};
-	return { result => 'ok', mapInfo => $maps->{$args->{'mapName'}}};
+	my ($self, $args) = @_;
+	$self->exists(maps => $args->{mapName}) or return { result => $@ };
+	return { result => $RESULT_OK, 'map' => $self->maps->{$args->{mapName}}};
 }
+
+# Game-related queries
 
 sub createGame {
-	my $self = shift;
-	$self->db_extract(qw/games players maps/);
-	my $games = $self->{'games'} ||= {};
-	my $players = $self->{'players'} ||= {};
-	my $maps = $self->{'maps'} ||= {};
-	my $args = shift;
-	return { result => 'unknownUser' } unless exists $players->{$args->{'userName'}};
-	return { result => 'unknownMap' } unless exists $maps->{$args->{'mapName'}};
-	return { result => 'gameExists' } if exists $games->{$args->{'gameName'}};
-
-	$games->{$args->{'gameName'}} = {
-		players => [{ name => $args->{'userName'} }],
-		name => $args->{'gameName'},
-		'map' => $args->{'mapName'},
-		maxPlayers => $args->{'maxPlayers'},
-		status => 'preparing'
+	my ($self, $args) = @_;
+	$self->exists(
+	   	players => $args->{userName},
+	   	maps => $args->{mapName}
+	) or return { result => $@ };
+	my $game = $self->add(games => $args->{gameName}) or return { result => $@ };
+	$$game = {
+		name	=>	$args->{gameName},
+		'map'	=>	$args->{mapName},
+		maxPlayers	=>	$args->{maxPlayers},
+		players		=>	[{ name => $args->{userName}, isReady => 0 }],
+		status		=>	'preparing'
 	};
-	return { result => 'ok' };
-}
-
-sub joinGame {
-	my $self = shift;
-	$self->db_extract(qw/players games/);
-	my $games = $self->{'games'};
-	my $players = $self->{'players'};
-	my $args = shift;
-	return { result => 'unknownUser' } unless exists $players->{$args->{'userName'}};
-	return { result => 'unknownGame' } unless exists $games->{$args->{'gameName'}};
-	my $game = $games->{$args->{'gameName'}};
-	return { result => 'alreadyMaxPlayers' } if $game->{'maxPlayers'} == length @{$game->{'players'}};
-	return { result => 'alreadyStarted' } unless $game->{'state'} == 'preparing';
+	return { result => $RESULT_OK };
 }
 
 sub getGames {
 	my $self = shift;
-	$self->db_extract('games');
-	return { result => 'ok', games => [sort dsort keys %{$self->{'games'}}]};
+	#print mysort keys %{$self->games};
+	return { result => $RESULT_OK, games => [ keys %{$self->games}] };
 }
 
-sub getGameInfo {
-	my $self = shift;
-	$self->db_extract('games');
-	my $args = shift;
-	return { result => 'unknownGame' } unless exists $self->{'games'}->{$args->{'gameName'}};
-	return { result => 'ok', game => $self->{'games'}->{$args->{'gameName'}}};
+sub getGameInfo { 
+	return { result => $RESULT_OK };
 }
 
-sub dsort {
-	return $a cmp $b;
+sub getGameState {
+	return { result => $RESULT_OK };
 }
 
-1;
+sub loadGame {
+	return { result => $RESULT_OK };
+}
+
+sub move {
+	return { result => $RESULT_OK };
+}
+
+sub surrender {
+	return { result => $RESULT_OK };
+}

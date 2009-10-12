@@ -39,7 +39,7 @@ sub wrap_is {
 		my ($data, $key, $ans, $msg, $sub) = @_;
 		my $json = wrap $data;
 		my $res;
-		print "$json\n";
+		#print "$json\n";
 		eval { $res = decode_json $json };
 		if($@) {
 			fail 'Invalid JSON';
@@ -114,7 +114,7 @@ sub test {
 	wrap_is { action => 'uploadMap', mapInfo => $cassiopeia	}, result => 'ok', 'upload Cassiopeia';
 	wrap_is { action => 'uploadMap', mapInfo => $cassiopeia	}, result => 'mapExists', 'upload Cassiopeia again';
 	wrap_is { action => 'getMaps' }, maps => ['Aldebaran', 'Betelgeuse', 'Cassiopeia', 'NGC 2238'], 'getMaps', \&is_deeply;
-	wrap_is { action => 'getMapInfo', mapName => 'Cassiopeia' }, mapInfo => $cassiopeia, 'getMapInfo', \&is_deeply; 
+	wrap_is { action => 'getMapInfo', mapName => 'Cassiopeia' }, 'map' => $cassiopeia, 'getMapInfo', \&is_deeply; 
 
 	wrap_is 
 		{
@@ -154,6 +154,6 @@ sub test {
 }
 
 test;
-print "\nREMOTE TESTING\n\n";
-test 'http://localhost:8080';
+#print "\nREMOTE TESTING\n\n";
+#test 'http://localhost:8080';
 #test 'http://watcher.mine.nu/constellation/';

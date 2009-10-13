@@ -109,9 +109,17 @@ sub dispatch {
 # Request methods
 
 sub clear {
-	no strict 'refs';
 	my $self = shift;
+	for(qw/players games maps/) {
+		for my $key(keys %{$self->$_}) {
+			delete $self->$_->{$key};
+		}
+	}
 	#$self->{dbhash}->{$_} = {} for qw/players games maps/;
+	#$self->$_ = {} for qw/players games maps/;
+	#for(qw/players games maps/) {
+	#	$self->{$_} = {} if exists $self->{$_}
+	#}
 	return { result => $RESULT_OK }; 
 }
 
@@ -137,7 +145,8 @@ sub getUsers {
 
 sub joinGame {
 	my ($self, $args) = @_;
-	my ($user, $game) = @{$args->{qw/userName gameName/}};
+	#my ($user, $game) = @{$args->{qw/userName gameName/}};
+	my ($user, $game) = ($args->{userName}, $args->{gameName});
 	$self->exists(players => $user, games => $game) or return { result => $@ };
 	return { result => 'alreadyInGame' } if defined $self->players->{$user}->{game};
 	$game = $self->games->{$game};
@@ -194,11 +203,11 @@ sub getMapInfo {
 
 sub createGame {
 	my ($self, $args) = @_;
-	$self->exists(
-	   	players => $args->{userName},
-	   	maps => $args->{mapName}
-	) or return { result => $@ };
 	my $game = $self->add(games => $args->{gameName}) or return { result => $@ };
+	unless($self->exists( players => $args->{userName}, maps => $args->{mapName})) {
+		delete $self->games->{$args->{gameName}};
+		return { result => $@ };
+	}
 	$$game = {
 		name	=>	$args->{gameName},
 		'map'	=>	$args->{mapName},
@@ -212,7 +221,7 @@ sub createGame {
 sub getGames {
 	my $self = shift;
 	#print mysort keys %{$self->games};
-	return { result => $RESULT_OK, games => [ keys %{$self->games}] };
+	return { result => $RESULT_OK, games => [ sort {$a cmp $b} keys %{$self->games}] };
 }
 
 sub getGameInfo { 
@@ -220,7 +229,8 @@ sub getGameInfo {
 }
 
 sub getGameState {
-	return { result => $RESULT_OK };
+	my $self = shift;
+	return { result => $RESULT_OK, state => [ sort {$a cmp $b} keys %{$self->states} ] };
 }
 
 sub loadGame {

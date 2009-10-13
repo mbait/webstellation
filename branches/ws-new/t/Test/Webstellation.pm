@@ -16,7 +16,8 @@ our @ISA = qw/Exporter/;
 our @EXPORT = qw/test/;
 
 my ($fh, $fname) = tempfile('tmpXXXX', DIR => '/tmp');
-our $host = 'http://watcher.mine.nu/constellation/';
+our $host;
+#our $host = 'http://watcher.mine.nu/constellation/';
 #our $host = 'http://localhost:8080';
 
 sub wrap {

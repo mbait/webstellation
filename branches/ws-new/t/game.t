@@ -50,4 +50,13 @@ test
 	},
 	result => 'unknownMap',
 	'createGame with bad map';
-
+test { action => 'register', userName => 'John' }, result => 'ok', 'register John';
+test 
+	{
+		action => 'createGame', userName => 'John',
+		mapName => 'Aldebaran', maxPlayers => 3,
+		gameName => 'Game0'
+	},
+	result => 'ok', 
+	'createGame';
+test { action => 'getGames' }, games => [qw/Game0 Game1/], 'get games', 'is_deeply';

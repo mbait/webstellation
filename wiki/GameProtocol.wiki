@@ -178,7 +178,7 @@ Toggle player's readiness to start the game he's joined.  A game is started only
 
 === `leaveGame` ===
 
-Unregister a player from the game he's participating, but allow him to watch.
+Unregister a player from the game he's participating, but let him to watch.
 
 || *`>`* || `userName` || _string_ || Name of the user. ||
 

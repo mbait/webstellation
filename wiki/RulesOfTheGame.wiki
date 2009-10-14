@@ -1,4 +1,4 @@
-#summary Describes general rules of the game Constellation
+#summary General rules of Constellation game
 
 The game involves two or more players competing for control over a star system.
 

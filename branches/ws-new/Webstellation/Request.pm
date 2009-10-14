@@ -26,6 +26,25 @@ sub mysort {
 	return sort {$a cmp $b} shift;
 }
 
+sub validate {
+	my ($data, $tmpl) = @_;
+	if(ref $tmpl eq 'HASH') {
+		ref $data eq 'HASH' || return 0;
+		for(keys %$tmpl) {
+			exists $data->{$_} or return 0;
+			validate($data->{$_}, $tmpl->{$_}) or return 0 
+		}
+	}
+	elsif(ref $tmpl eq 'ARRAY') {
+		ref $data eq 'ARRAY' || return 0;
+		for(my $i=0; $i<@$tmpl; ++$i) { 
+			@$data < $i or return 0;
+			validate($data->[$i], $tmpl->[$i]) or return 0 
+		}
+	}
+	return $data ne '' && ref $data eq 'SCALAR';
+}
+
 sub new {
 	my $invocant = shift;
 	my $class = ref($invocant) || $invocant;
@@ -127,6 +146,7 @@ sub clear {
 
 sub register {
 	my ($self, $args) = @_;
+	validate $args, { userName => 'string' } or return { result => 'formatError' };
 	my $player = $self->add(players => $args->{userName}) or return { result => $@ };
 	$$player = { game => undef };
 	return { result => $RESULT_OK };
@@ -134,6 +154,7 @@ sub register {
 
 sub logout {
 	my ($self, $args) = @_;
+	validate $args, { userName => 'string' } or return { result => 'formatError' };
 	$self->delete(players => $args->{userName}) or return { result => $@ };
 	return { result => $RESULT_OK };
 }
@@ -145,7 +166,7 @@ sub getUsers {
 
 sub joinGame {
 	my ($self, $args) = @_;
-	#my ($user, $game) = @{$args->{qw/userName gameName/}};
+	validate $args, { userName => 'string', gameName => 'string' } or return { result => 'formatError' };
 	my ($user, $game) = ($args->{userName}, $args->{gameName});
 	$self->exists(players => $user, games => $game) or return { result => $@ };
 	return { result => 'alreadyInGame' } if defined $self->players->{$user}->{game};
@@ -159,6 +180,7 @@ sub joinGame {
 
 sub toggleReady {
 	my ($self, $args) = @_;
+	validate $args, { userName => 'string' } or return { result => 'formatError' };
 	my $user = $args->{userName};
 	$self->exists(players => $user) or return { result => $@ };
 	return { result => 'notInGame' } unless defined $self->players->{$user}->{game};
@@ -170,6 +192,7 @@ sub toggleReady {
 
 sub leaveGame {
 	my ($self, $args) = @_;
+	validate $args, { userName => 'string' } or return { result => 'formatError' };
 	my $user = $args->{userName};
 	$self->exists(players => $user) or return { result => $@ };
 	return { result => 'notInGame' } unless defined $self->players->{$user}->{game};
@@ -203,11 +226,18 @@ sub getMapInfo {
 
 sub createGame {
 	my ($self, $args) = @_;
+	validate $args, { 
+		userName => 'string',
+	   	gameName => 'string',
+	   	mapName => 'string' 
+	} or return { result => 'formatError' };
 	my $game = $self->add(games => $args->{gameName}) or return { result => $@ };
 	unless($self->exists( players => $args->{userName}, maps => $args->{mapName})) {
 		delete $self->games->{$args->{gameName}};
 		return { result => $@ };
 	}
+	if(defined $self->players->{$args->{userName}}->{game}) { return { result => 'alreadyInGame' } }
+	else { $self->players->{$args->{userName}}->{game} = $args->{gameName} }
 	$$game = {
 		name	=>	$args->{gameName},
 		'map'	=>	$args->{mapName},
@@ -225,12 +255,15 @@ sub getGames {
 }
 
 sub getGameInfo { 
-	return { result => $RESULT_OK };
+	my ($self, $args) = @_;
+	validate $args, { gameName => 'string' } or return { result => 'formatError' };
+	return { result => $RESULT_OK, game => $self->games->{$args->{gameName}}};
 }
 
 sub getGameState {
-	my $self = shift;
-	return { result => $RESULT_OK, state => [ sort {$a cmp $b} keys %{$self->states} ] };
+	my ($self, $args) = @_;
+	validate $args, { gameName => 'string' } or return { result => 'formatError' };
+	return { result => $RESULT_OK, state => $self->states->{$args->{gameName}} };
 }
 
 sub loadGame {
@@ -238,9 +271,13 @@ sub loadGame {
 }
 
 sub move {
+	my ($self, $args) = @_;
+	validate $args, { userName => 'string' } or return { result => 'formatError' };
 	return { result => $RESULT_OK };
 }
 
 sub surrender {
+	my ($self, $args) = @_;
+	validate $args, { userName => 'string' } or return { result => 'formatError' };
 	return { result => $RESULT_OK };
 }

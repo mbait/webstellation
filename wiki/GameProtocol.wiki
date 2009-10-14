@@ -1,31 +1,29 @@
 #summary Describes format of the protocol of client/server interaction
+<wiki:toc max_depth="2" />
 
-= Game Protocol =
-
-
-== Overview ==
+= Overview =
 
 Clients use series of requests in [http://www.json.org/ JSON] format to communicate with a game server.  Requests are sent between a client and a server using POST method of HTTP protocol, where the text of a query is stored as value of the only variable named `r`.  Each query is an object (an unordered set of name/value pairs) that contains parameters of a game operation.  The correct query has mandatory parameter `action` containing the identifier of an operation for the server to perform.  Presence or absence of other parameters depends on a particular action.
 
 The server's response on a request is also a JSON object with mandatory field `result` (containing string "`ok`", meaning successful query execution, or the identifier of an error occurred from the list [#Error_Messages below]).  Optionally, any response has field `message` containing a text message to the end user.  Again, depending on the type of an action, response object contains additional fields describing the result of an operation.
 
 
-== Error Messages ==
+= Error Messages =
 
-=== Map Related Errors ===
+== Map Related Errors ==
 
 || `mapExists` || The specified title is already used to name another map. ||
 || `unknownMap` || A map with the specified name is not registered yet. ||
 || `badMapInfo` || The object of [#MapInfo MapInfo] structure is not formatted correctly. ||
 
-=== User Related Errors ===
+== User Related Errors ==
 
 || `alreadyTaken` || The specified user name is already taken by another user. ||
 || `unknownUser` || A user with the specified name is not registered yet. ||
 || `alreadyInGame` || The specified user is already playing a game. ||
 || `notInGame` || The specified user is not playing any game currently. ||
 
-=== Game Related Errors ===
+== Game Related Errors ==
 
 || `gameExists` || The specified title is already used to name another game. ||
 || `unknownGame` || A game with the specified name was not registered yet. ||
@@ -38,34 +36,34 @@ The server's response on a request is also a JSON object with mandatory field `r
 || `notYourTurn` || The specified player could not make a move because it is turn of another player. ||
 || `badPlanet` || The index of a planet to build a base on is incorrect. ||
 
-=== Other Errors ===
+== Other Errors ==
 
 || `formatError` || Format of the specified request is incorrect, meaning malformed JSON string, invalid types or values of parameters in the query. ||
 || `generalError` || Any error other than that listed above. ||
 
 
-== Structures ==
+= Structures =
 
-=== `PlanetInfo` ===
+== `PlanetInfo` ==
 
 || `x` || _integer_ || X-coordinate of the planet on Cartesian plane. ||
 || `y` || _integer_ || Y-coordinate of the planet on Cartesian plane. ||
 || `size` || _integer_ || Size of the planet; equals to 1, 2, or 3. ||
 || `neighbors` || _array_ || Indices of the adjacent planets (starting from zero) in `planets` array of [#MapInfo MapInfo] structure; order is not important. ||
 
-=== `MapInfo` ===
+== `MapInfo` ==
 
 A map is represented by undirected, unweighted graph which is a model of the star system.  Note that for purposes of visual simplicity a _planar_ graph is desirable.
 
 || `name` || _string_ || Name of the game map. ||
 || `planets` || _array_ || [#PlanetInfo PlanetInfo] structures that represent the planets and its' positions on the map; order is not important. ||
 
-=== `PlayerInfo` ===
+== `PlayerInfo` ==
 
 || `name` || _string_ || Name of the player. ||
 || `isReady` || _boolean_ || Readiness of the player to start the game (if he has joined one). ||
 
-=== `GameInfo` ===
+== `GameInfo` ==
 
 || `name` || _string_ || Name of the game. ||
 || `map` || _string_ || Name of the game map used. ||
@@ -73,25 +71,25 @@ A map is represented by undirected, unweighted graph which is a model of the sta
 || `players` || _array_ || [#PlayerInfo PlayerInfo] structures that represent the players; sorted in the order of joining the game (so the player who's created it is always the first one). ||
 || `status` || _string_ || Status of the game; equals to "`preparing`", "`playing`", "`finished`", or "`loaded`".||
 
-=== `PlanetState` ===
+== `PlanetState` ==
 
 || `owner` || _integer_ || Index of the player who owns the planet (starting from zero) in `players` array of `GameInfo` structure. ||
 || `bases` || _integer_ || The number of bases built on the planet; lays in range from zero to the size of this planet. ||
 
-=== `PlayerScore` ===
+== `PlayerScore` ==
 
 || `planets` || _integer_ || The number of planets owned by the player. ||
 || `bases` || _integer_ || The number of bases owned by the player. ||
 || `influence` || _integer_ || The total influence of the player. ||
 
-=== `GameState` ===
+== `GameState` ==
 
 || `active` || _integer_ || Index of the player who makes the turn (starting from zero) in `players` array of `GameInfo` structure. ||
 || `planets` || _array_ || [#PlanetState PlanetState] structures that represent state of the planets; sorted in exactly the same order as `planets` array in `MapInfo` structure. ||
 || `score` || _array_ || [#PlayerScore PlayerScore] structures that represents score of every player in the game; sorted in exactly the same order as `players` array in `GameInfo` structure. ||
 
 
-== Queries ==
+= Queries =
 
 Query is entirely defined by set of its input and output parameters, as well as a list of types of errors that may occur during processing.
 
@@ -107,15 +105,15 @@ Regardless of the type of a query errors of these types could occur:
 
 If errors of several types occurred at the same time, then the only one of them is reported, that that listed earlier in the list of errors of the processing query.  `formatError` is always first type in list of error types of a query, and `generalError` is always last one.  Other possible types of errors are listed below for each action.
 
-=== Map Related Queries ===
+== Map Related Queries ==
 
-==== `getMaps` ====
+=== `getMaps` ===
 
 List registered maps.
 
 || *`<`* || `maps` || _array_ || Names of already registered maps ordered lexicographically. ||
 
-==== `getMapInfo` ====
+=== `getMapInfo` ===
 
 Return information about a map.
 
@@ -125,7 +123,7 @@ Return information about a map.
 
 || *`!`* || `unknownMap` ||
 
-==== `uploadMap` ====
+=== `uploadMap` ===
 
 Upload a map to the game server.
 
@@ -134,15 +132,15 @@ Upload a map to the game server.
 || *`!`* || `mapExists` ||
 || *`!`* || `badMapInfo` ||
 
-=== User Related Queries ===
+== User Related Queries ==
 
-==== `getUsers` ====
+=== `getUsers` ===
 
 List registered users.
 
 || *`<`* || `users` || _array_ || Names of already registered users ordered lexicogrphically. ||
 
-==== `register` ====
+=== `register` ===
 
 Register a user on the game server.
 
@@ -150,7 +148,7 @@ Register a user on the game server.
 
 || *`!`* || `alreadyTaken` ||
 
-==== `joinGame` ====
+=== `joinGame` ===
 
 Join the specified user to a game.
 
@@ -163,7 +161,7 @@ Join the specified user to a game.
 || *`!`* || `alreadyMaxPlayers` ||
 || *`!`* || `alreadyStarted` ||
 
-==== `toggleReady` ====
+=== `toggleReady` ===
 
 Toggle player's readiness to start the game he's joined.  A game is started only when all of the participating players have declared their readiness.
 
@@ -172,7 +170,7 @@ Toggle player's readiness to start the game he's joined.  A game is started only
 || *`!`* || `unknownUser` ||
 || *`!`* || `notInGame` ||
 
-==== `leaveGame` ====
+=== `leaveGame` ===
 
 Unregister a player from the game he's participating.
 
@@ -181,7 +179,7 @@ Unregister a player from the game he's participating.
 || *`!`* || `unknownUser` ||
 || *`!`* || `notInGame` ||
 
-==== `logout` ====
+=== `logout` ===
 
 Unregister a user from the game server.
 
@@ -189,15 +187,15 @@ Unregister a user from the game server.
 
 || *`!`* || `unknownUser` ||
 
-=== Game Related Queries ===
+== Game Related Queries ==
 
-==== `getGames` ====
+=== `getGames` ===
 
 List registered games.
 
 || *`<`* || `games` || _array_ || Names of already registered games ordered lexicographically. ||
 
-==== `getGameInfo` ====
+=== `getGameInfo` ===
 
 Return information about a game.
 
@@ -207,7 +205,7 @@ Return information about a game.
 
 || *`!`* || `unknownGame` ||
 
-==== `createGame` ====
+=== `createGame` ===
 
 Create a game on the game server.
 
@@ -222,7 +220,7 @@ Create a game on the game server.
 || *`!`* || `badMaxPlayers` ||
 || *`!`* || `alreadyInGame` ||
 
-==== `loadGame` ====
+=== `loadGame` ===
 
 Upload a saved earlier game.
 
@@ -236,7 +234,7 @@ Upload a saved earlier game.
 || *`!`* || `badGameState` ||
 || *`!`* || `alreadyInGame` ||
 
-==== `getGameState` ====
+=== `getGameState` ===
 
 Return the state of a game playing.
 
@@ -247,7 +245,7 @@ Return the state of a game playing.
 || *`!`* || `unknownGame` ||
 || *`!`* || `notStarted` ||
 
-==== `move` ====
+=== `move` ===
 
 Make a move.
 
@@ -258,7 +256,7 @@ Make a move.
 || *`!`* || `badPlanet` ||
 || *`!`* || `notYourMove` ||
 
-==== `surrender` ====
+=== `surrender` ===
 
 Concede a player's defeat.
 

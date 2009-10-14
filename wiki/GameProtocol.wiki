@@ -44,26 +44,43 @@ The server's response on a request is also a JSON object with mandatory field `r
 
 = Structures =
 
-== `PlanetInfo` ==
+== Map Related Structures ==
 
-|| `x` || _integer_ || X-coordinate of the planet on Cartesian plane. ||
-|| `y` || _integer_ || Y-coordinate of the planet on Cartesian plane. ||
-|| `size` || _integer_ || Size of the planet; equals to 1, 2, or 3. ||
-|| `neighbors` || _array_ || Indices of the adjacent planets (starting from zero) in `planets` array of [#MapInfo MapInfo] structure; order is not important. ||
-
-== `MapInfo` ==
+=== `MapInfo` ===
 
 A map is represented by undirected, unweighted graph which is a model of the star system.  Note that for purposes of visual simplicity a _planar_ graph is desirable.
 
 || `name` || _string_ || Name of the game map. ||
 || `planets` || _array_ || [#PlanetInfo PlanetInfo] structures that represent the planets and its' positions on the map; order is not important. ||
 
-== `PlayerInfo` ==
+=== `PlanetInfo` ===
+
+|| `x` || _integer_ || X-coordinate of the planet on Cartesian plane. ||
+|| `y` || _integer_ || Y-coordinate of the planet on Cartesian plane. ||
+|| `size` || _integer_ || Size of the planet; equals to 1, 2, or 3. ||
+|| `neighbors` || _array_ || Indices of the adjacent planets (starting from zero) in `planets` array of [#MapInfo MapInfo] structure; order is not important. ||
+
+=== `PlanetState` ===
+
+|| `owner` || _integer_ || Index of the player who owns the planet (starting from zero) in `players` array of `GameInfo` structure. ||
+|| `bases` || _integer_ || The number of bases built on the planet; lays in range from zero to the size of this planet. ||
+
+== Player Related Structures ==
+
+=== `PlayerInfo` ===
 
 || `name` || _string_ || Name of the player. ||
 || `isReady` || _boolean_ || Readiness of the player to start the game (if he has joined one). ||
 
-== `GameInfo` ==
+=== `PlayerScore` ===
+
+|| `planets` || _integer_ || The number of planets owned by the player. ||
+|| `bases` || _integer_ || The number of bases owned by the player. ||
+|| `influence` || _integer_ || The total influence of the player. ||
+
+== Game Related Structures ==
+
+=== `GameInfo` ===
 
 || `name` || _string_ || Name of the game. ||
 || `map` || _string_ || Name of the game map used. ||
@@ -71,18 +88,7 @@ A map is represented by undirected, unweighted graph which is a model of the sta
 || `players` || _array_ || [#PlayerInfo PlayerInfo] structures that represent the players; sorted in the order of joining the game (so the player who's created it is always the first one). ||
 || `status` || _string_ || Status of the game; equals to "`preparing`", "`playing`", "`finished`", or "`loaded`".||
 
-== `PlanetState` ==
-
-|| `owner` || _integer_ || Index of the player who owns the planet (starting from zero) in `players` array of `GameInfo` structure. ||
-|| `bases` || _integer_ || The number of bases built on the planet; lays in range from zero to the size of this planet. ||
-
-== `PlayerScore` ==
-
-|| `planets` || _integer_ || The number of planets owned by the player. ||
-|| `bases` || _integer_ || The number of bases owned by the player. ||
-|| `influence` || _integer_ || The total influence of the player. ||
-
-== `GameState` ==
+=== `GameState` ===
 
 || `active` || _integer_ || Index of the player who makes the turn (starting from zero) in `players` array of `GameInfo` structure. ||
 || `planets` || _array_ || [#PlanetState PlanetState] structures that represent state of the planets; sorted in exactly the same order as `planets` array in `MapInfo` structure. ||

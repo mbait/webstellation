@@ -1,4 +1,4 @@
-#summary Describes format of the protocol of client/server interaction
+#summary Format of client/server interaction protocol
 <wiki:toc max_depth="2" />
 
 = Overview =

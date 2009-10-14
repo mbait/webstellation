@@ -9,9 +9,9 @@ test { action => 'register', userName => 'Jack' }, result => 'ok', 'register Jac
 my $aldebaran =  {
 	name => 'Aldebaran', 
 	planets => [
-		{ x => 0, y => 0, size => 3, neighbors => [1] },
-		{ x => 1, y => 0, size => 1, neighbors => [1] },
-		{ x => 0, y => 1, size => 1, neighbors => [1] },
+		{ x => 0, y => 0, size => 3, neighbors => [] },
+		{ x => 1, y => 0, size => 1, neighbors => [] },
+		{ x => 0, y => 1, size => 1, neighbors => [] },
 	]
 };
 test { action => 'uploadMap', mapInfo => $aldebaran }, result => 'ok', 'upload Aldebaran';

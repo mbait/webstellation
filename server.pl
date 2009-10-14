@@ -40,7 +40,14 @@ while(my $c = $d->accept) {
 	defined($pid) or die "Failed to fork: $!\n";
 
 	my $r = $c->get_request;
-	$c->send_error(RC_NOT_IMPLEMENTED) unless $r->method eq 'POST';
+	# client request
+	unless($r->method eq 'POST') {
+		$r->uri('/index.html') if($r->uri eq '/');
+		$c->send_file('client'.$r->uri);
+		$c->close;
+		next;
+	}
+
 	$c->send_error(RC_FORBIDDEN) unless $r->uri->path eq '/';
 
 	$r->content =~ /r=(.*)/;

@@ -1,7 +1,5 @@
 #summary Describes general rules of the game Constellation
 
-= Rules of the Game =
-
 The game involves two or more players competing for control over a star system.
 
 A star system is represented by planar graph with given number of vertices.  Each vertex represents a planet of size one, two, or three.

@@ -2,6 +2,13 @@ body {
 	background: #dcdcdc;
 }
 
+div.user {
+	font-family: courier new;
+	font-size: 10pt;
+	font-color: #aaaaaa;
+	font-weight: bold;
+}
+
 #hello_dialog {
 	text-align: center;
 	display: block;
@@ -12,7 +19,6 @@ body {
 
 #hello_dialog h1 {
 	font-family: Arial;
-	font-weight: none;
 	font-size: 14pt;
 	color: gray;
 }
@@ -24,4 +30,38 @@ body {
 #helper sup {
 	font-size: 10pt;
 	color: gray;
+}
+
+#ui {
+	margin-left: auto;
+	margin-right: auto;
+	background: red;
+	width: 800px;
+	height: 800px;
+	display: none;
+}
+
+#ui_userlist {
+	padding-top: 15px;
+	margin-left: auto;
+	background: yellow;
+	display: block;
+	width: 200px;
+	height: 700px;
+	text-align: center;
+}
+
+#ui_userlist textarea {
+	margin-top: 5px;
+	width: 90%;
+	height: 50%;
+}
+
+#ui_progress {
+	margin-left: auto;
+	margin-right: auto;
+	background: green;
+	display: block;
+	width: 100%;
+	height: 100px;
 }

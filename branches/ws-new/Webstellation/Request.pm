@@ -28,21 +28,30 @@ sub mysort {
 
 sub validate {
 	my ($data, $tmpl) = @_;
+	#print "$tmpl\n";
 	if(ref $tmpl eq 'HASH') {
+		#print "this is hash\n";
 		ref $data eq 'HASH' || return 0;
 		for(keys %$tmpl) {
+			#print $data->{$_}.' '.$tmpl->{$_};
 			exists $data->{$_} or return 0;
 			validate($data->{$_}, $tmpl->{$_}) or return 0 
 		}
+		return 1;
 	}
 	elsif(ref $tmpl eq 'ARRAY') {
+		#print "this is array\n";
 		ref $data eq 'ARRAY' || return 0;
-		for(my $i=0; $i<@$tmpl; ++$i) { 
-			@$data < $i or return 0;
-			validate($data->[$i], $tmpl->[$i]) or return 0 
+		for my $elem (@$tmpl) {
+			@$data or return 0;
+			validate($_, $elem) or return 0 for(@$data);
 		}
+		return 1;
 	}
-	return $data ne '' && ref $data eq 'SCALAR';
+	else {
+		#print $tmpl;
+		return $data ne '' && ! ref $data;
+	}
 }
 
 sub new {
@@ -108,7 +117,7 @@ sub dispatch {
 	my ($self, $data) = @_;
 	return encode_json { result => 'formatError', message => "$@" }
 		unless eval { $data = decode_json $data };
-	return encode_json { result => 'generalError', message => 'Action is undefined' }
+	return encode_json { result => 'formatError', message => 'Action is undefined' }
 		unless exists $data->{action};
 
 	my %dbhash;
@@ -196,8 +205,8 @@ sub leaveGame {
 	my $user = $args->{userName};
 	$self->exists(players => $user) or return { result => $@ };
 	return { result => 'notInGame' } unless defined $self->players->{$user}->{game};
-	my $game = $self->games->{$self->players->{$user}->{game}}->{players};
-	$game->{players} = [ grep { ! $_->{name} eq $user } @{$game->{players}} ];
+	my $players = $self->games->{$self->players->{$user}->{game}}->{players};
+	@$players = [ grep { $_->{name} ne $user } @$players ];
 	$self->players->{$user}->{game} = undef;
 	return { result => $RESULT_OK };
 }
@@ -206,6 +215,17 @@ sub leaveGame {
 
 sub uploadMap {
 	my ($self, $args) = @_;
+	validate $args, { 
+		mapInfo => { 
+			name => 'string', 
+			planets => [{ 
+				x => 'string',
+			   	y => 'string',
+				size => 'string',
+			   	neighbors => [] 
+			}] 
+		}
+   	} or return { result => 'formatError' };
 	my $map = $self->add(maps => $args->{mapInfo}->{name}) or return { result => $@ };
 	$$map = $args->{mapInfo};
 	return { result => $RESULT_OK };

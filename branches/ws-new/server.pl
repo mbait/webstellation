@@ -23,6 +23,7 @@ if(open FH, 'server.conf') {
 else {
 	$conf{'port'} = '4440';
 	$conf{'db'} = 'data.db';
+	$conf{'log'} = 'server.log';
 	warn "Failed to read server.conf: $!\nUsing defaults\n";
 }
 
@@ -32,12 +33,12 @@ my $d = HTTP::Daemon->new(LocalPort => $conf{'port'}, Reuse => 1) or die $!;
 print "Listening on port $conf{'port'}\n";
 
 while(my $c = $d->accept) {
-	my $pid;
-	if($pid = fork) {
-		$c->close;
-		next;
-	}
-	defined($pid) or die "Failed to fork: $!\n";
+	#my $pid;
+	#if($pid = fork) {
+	#	$c->close;
+	#	next;
+	#}
+	#defined($pid) or die "Failed to fork: $!\n";
 
 	my $r = $c->get_request;
 	# client request
@@ -56,9 +57,11 @@ while(my $c = $d->accept) {
 		next;
 	}
 	my $json = uri_unescape $1;
-	print "$json\n";
+	#print "$json\n";
+	print  "-> $1\n";
+	print "$json\n\n";
 	$c->send_response(HTTP::Response->new(200, status_message(200),
 		   HTTP::Headers->new(Content_Type => 'text/plain'), $g->dispatch($json)));
 	$c->close;
-	exit;
+	#exit;
 }

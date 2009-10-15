@@ -29,3 +29,4 @@ test { action => 'joinGame', gameName => 'MyGame', userName => 'Robin' }, result
 test { action => 'leaveGame', userName => 'Jocker' }, result => 'unknownUser', 'Jocker is not registered';
 test { action => 'register', userName => 'Jocker' }, result => 'ok', 'register Jocker';
 test { action => 'leaveGame', userName => 'Jocker' }, result => 'notInGame', 'Jocker is not in game';
+test { action => 'leaveGame', userName => 'Robin' }, result => 'ok', 'Robin leaves games';

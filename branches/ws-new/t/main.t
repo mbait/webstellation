@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
+use lib '..';
 use Test::Webstellation;
 
 test '', result => 'formatError', 'Invalid JSON';

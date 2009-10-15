@@ -260,6 +260,7 @@ Make a move.
 
 || *`!`* || `unknownUser` ||
 || *`!`* || `badPlanet` ||
+|| *`!`* || `notStarted` ||
 || *`!`* || `notYourMove` ||
 
 === `surrender` ===
@@ -270,3 +271,4 @@ Concede a player's defeat.
 
 || *`!`* || `unknownUser` ||
 || *`!`* || `notInGame` ||
+|| *`!`* || `notStarted` ||

@@ -4,17 +4,26 @@
 		<title>-=Webstellation=-</title>
 		<link rel="stylesheet" type="text/css" href="style.css" />
 		<!--script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"</script-->
-		<script type="text/javascript" src="js/prototype.js"></script>
+		<!--script type="text/javascript" src="js/prototype.js"></script-->
+		<script type="text/javascript" src="js/mootools.js"></script>
 		<script type="text/javascript" src="js/main.js"></script>
 	</head>
 	<body>
+		<button onclick="clearAll()">clear</button>
 		<div id="hello_dialog">
 			<h1>Wellcome to Webstellation!</h1>
 			<label for="host">Host IP address</label>
 			<input type="text" name="host" id="host" value="http://localhost:8080">
+			<label for="user">Username</label>
+			<input type="text" name="user" id="user">
 			<button onclick="connect()">Play</button>
-			<div id="helper">
-				<sup>(i.e. http://localhost:8080)</sup>
+		</div>
+		<div id="ui">
+			<div id="ui_userlist">
+				<div id="userlist">
+				</div>
 			</div>
+			<div id="ui_progress"></div>
+		</div>
 	</body>
 </html>

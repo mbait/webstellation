@@ -1,4 +1,5 @@
 use strict;
+use lib 't';
 use Test::Webstellation;
 
 test { action => 'clear' }, result => 'ok', 'clear database';
@@ -22,3 +23,13 @@ test { action => 'logout', userName => {} }, result => 'formatError', 'hash user
 test { action => 'getGameInfo', gameName => '' }, result => 'formatError', 'empty game name';
 test { action => 'getGameInfo', gameName => [] }, result => 'formatError', 'array game name';
 test { action => 'getGameInfo', gameName => {} }, result => 'formatError', 'hash game name';
+
+test { action => 'uploadMap' }, result => 'formatError', 'empty mapInfo';
+test {
+   	action => 'uploadMap',
+	mapInfo => {
+		name => 'map1',
+		planets => [{x => 0, y => 0, size => 1, neighbors => []}]
+	}
+}, result => 'ok', 'valid mapInfo';
+test { action => 'getGameState', gameName => {} }, result => 'formatError', 'gameName is hash in getGameState';

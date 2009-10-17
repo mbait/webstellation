@@ -259,9 +259,10 @@ Make a move.
 || *`>`* || `planet` || _integer_ || Index of the planet where new base should be built.  Planets are numbered starting from zero and ordered as in `planets` array of [#MapInfo MapInfo] structure. ||
 
 || *`!`* || `unknownUser` ||
-|| *`!`* || `badPlanet` ||
+|| *`!`* || `notInGame` ||
 || *`!`* || `notStarted` ||
 || *`!`* || `notYourMove` ||
+|| *`!`* || `badPlanet` ||
 
 === `surrender` ===
 

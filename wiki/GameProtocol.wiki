@@ -161,11 +161,11 @@ Join the specified user to a game.
 || *`>`* || `userName` || _string_ || Name of the user. ||
 || *`>`* || `gameName` || _string_ || Name of the game. ||
 
+|| *`!`* || `unknownGame` ||
 || *`!`* || `unknownUser` ||
 || *`!`* || `alreadyInGame` ||
-|| *`!`* || `unknownGame` ||
-|| *`!`* || `alreadyMaxPlayers` ||
 || *`!`* || `alreadyStarted` ||
+|| *`!`* || `alreadyMaxPlayers` ||
 
 === `toggleReady` ===
 

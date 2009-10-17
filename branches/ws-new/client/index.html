@@ -8,7 +8,7 @@
 		<script type="text/javascript" src="js/mootools.js"></script>
 		<script type="text/javascript" src="js/main.js"></script>
 	</head>
-	<body>
+	<body onload="tryEnter()">
 		<button onclick="clearAll()">clear</button>
 		<div id="hello_dialog">
 			<h1>Wellcome to Webstellation!</h1>
@@ -19,11 +19,44 @@
 			<button onclick="connect()">Play</button>
 		</div>
 		<div id="ui">
-			<div id="ui_userlist">
+			<div id="lobby">
+				<div id="lobby_menu">
+					<a href="#">Create game</a>
+					|
+					<a href="#" onclick="logout()">Logout</a>
+				</div>
+				<div id="gamelist">
+					<table id="gametable">
+						<thead>
+							<th>Game name</th>
+							<th>Map name</th>
+							<th>Players</th>
+							<th>State</th>
+						</thead>
+						<tr>
+							<td>gamename</td>
+							<td>mapname</td>
+							<td>players</td>
+							<td>state</td>
+						</tr>
+						<tr>
+							<td>gamename</td>
+							<td>mapname</td>
+							<td>players</td>
+							<td>state</td>
+						</tr>
+					</table>
+				</div>
 				<div id="userlist">
+					<div class="user">user 1</div>
+					<div class="user">user 1</div>
+					<div class="user">user 1</div>
+					<div class="user">user 1</div>
+					<div class="user">user 1</div>
 				</div>
 			</div>
-			<div id="ui_progress"></div>
+			<div id="game">
+			</div>
 		</div>
 	</body>
 </html>

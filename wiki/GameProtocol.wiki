@@ -273,3 +273,9 @@ Concede a player's defeat.
 || *`!`* || `unknownUser` ||
 || *`!`* || `notInGame` ||
 || *`!`* || `notStarted` ||
+
+== Other Queries ==
+
+=== `clearAll` ===
+
+Delete any information stored by game server; _for testing purposes only_.

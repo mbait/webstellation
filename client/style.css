@@ -1,12 +1,28 @@
 body {
-	background: #dcdcdc;
+	background: #fffaf0;
+}
+
+table {
+	width: 100%;
+	text-align: center;
+}
+
+thead {
+	font-family: courier;
 }
 
 div.user {
-	font-family: courier new;
+	font-family: sans-serif;
 	font-size: 10pt;
-	font-color: #aaaaaa;
-	font-weight: bold;
+	border-style: solid;
+	border-width: .5pt;
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+
+div.game {
+	font-family: sans-serif;
+	font-size: 10pt;
 }
 
 #hello_dialog {
@@ -18,18 +34,13 @@ div.user {
 }
 
 #hello_dialog h1 {
+	color: #a9a9a9;
 	font-family: Arial;
 	font-size: 14pt;
-	color: gray;
 }
 
 #hello_dialog label {
 	font-size: 10pt;
-}
-
-#helper sup {
-	font-size: 10pt;
-	color: gray;
 }
 
 #ui {
@@ -37,31 +48,24 @@ div.user {
 	margin-right: auto;
 	background: red;
 	width: 800px;
-	height: 800px;
-	display: none;
-}
-
-#ui_userlist {
-	padding-top: 15px;
-	margin-left: auto;
-	background: yellow;
 	display: block;
-	width: 200px;
-	height: 700px;
-	text-align: center;
 }
 
-#ui_userlist textarea {
+#lobby textarea {
 	margin-top: 5px;
 	width: 90%;
 	height: 50%;
 }
 
-#ui_progress {
-	margin-left: auto;
-	margin-right: auto;
+#gamelist {
 	background: green;
-	display: block;
-	width: 100%;
-	height: 100px;
+	float: left;
+	width: 80%;
+}
+
+#userlist {
+	text-align: center;
+	margin-left: auto;
+	background: yellow;
+	width: 20%;
 }

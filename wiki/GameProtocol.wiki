@@ -261,7 +261,7 @@ Make a move.
 || *`!`* || `unknownUser` ||
 || *`!`* || `notInGame` ||
 || *`!`* || `notStarted` ||
-|| *`!`* || `notYourMove` ||
+|| *`!`* || `notYourTurn` ||
 || *`!`* || `badPlanet` ||
 
 === `surrender` ===

@@ -220,9 +220,9 @@ Create a game on the game server.
 || *`>`* || `mapName` || _string_ || Name of the game map to use. ||
 || *`>`* || `maxPlayers` || _integer_ || The maximal allowable number of players in this game; should be in range from 2 to 10. ||
 
-|| *`!`* || `gameExists` ||
 || *`!`* || `unknownUser` ||
 || *`!`* || `unknownMap` ||
+|| *`!`* || `gameExists` ||
 || *`!`* || `badMaxPlayers` ||
 || *`!`* || `alreadyInGame` ||
 
@@ -234,8 +234,8 @@ Upload a saved earlier game.
 || *`>`* || `gameInfo` || _[#GameInfo GameInfo]_ || Description of the game. ||
 || *`>`* || `gameState` || _[#GameState GameState]_ || State of the game at the moment of saving. ||
 
-|| *`!`* || `gameExists` ||
 || *`!`* || `unknownUser` ||
+|| *`!`* || `gameExists` ||
 || *`!`* || `badGameInfo` ||
 || *`!`* || `badGameState` ||
 || *`!`* || `alreadyInGame` ||

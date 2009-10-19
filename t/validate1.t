@@ -33,3 +33,24 @@ test {
 	}
 }, result => 'ok', 'valid mapInfo';
 test { action => 'getGameState', gameName => {} }, result => 'formatError', 'gameName is hash in getGameState';
+
+test { action => 'uploadMap',
+	mapInfo => {
+		name => 'map11',
+		planets => [{x => 0, y => 0, size => 'q', neighbors => []}]
+	}
+}, result => 'formatError', 'string as size of planet';
+
+test { action => 'uploadMap',
+	mapInfo => {
+		name => 'map11',
+		planets => [{x => 0, y => 0, size => -1, neighbors => []}]
+	}
+}, result => 'badMapInfo', 'negative size of planet';
+
+test { action => 'uploadMap',
+	mapInfo => {
+		name => 'map11',
+		planets => [{x => 0, y => 0, size => 11, neighbors => []}]
+	}
+}, result => 'badMapInfo', 'too big size of planet';

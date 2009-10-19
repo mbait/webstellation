@@ -10,6 +10,7 @@ use Data::Dumper;
 
 my $RESULT_OK = 'ok';
 my ($MIN_PLAYERS, $MAX_PLAYERS) = (2, 10);
+my ($MIN_PLANET_SIZE, $MAX_PLANET_SIZE) = (1, 3);
 my %unique_error = (
 	games => 'gameExists',
 	players	=> 'alreadyTaken',
@@ -43,14 +44,17 @@ sub validate {
 		#print "this is array\n";
 		ref $data eq 'ARRAY' || return 0;
 		for my $elem (@$tmpl) {
-			@$data or return 0;
+			#@$data or return 0;
 			validate($_, $elem) or return 0 for(@$data);
 		}
 		return 1;
 	}
 	else {
 		#print $tmpl;
-		return $data ne '' && ! ref $data;
+		return 0 if ref $data;
+		return $data =~ /^-?\d+$/ if $tmpl eq 'int';
+		#return ($data >= $1 && $data <= $2) if $tmpl =~ /(\d+)..(\d+)/;
+		return $data ne '';
 	}
 }
 
@@ -219,14 +223,32 @@ sub uploadMap {
 		mapInfo => { 
 			name => 'string', 
 			planets => [{ 
-				x => 'string',
-			   	y => 'string',
-				size => 'string',
+				x => 'int',
+			   	y => 'int',
+				size => 'int',
 			   	neighbors => [] 
 			}] 
 		}
    	} or return { result => 'formatError' };
+	
 	my $map = $self->add(maps => $args->{mapInfo}->{name}) or return { result => $@ };
+	unless(eval {
+		my $planetcnt = @{$args->{mapInfo}->{planets}};
+		my $planetindex = 0;
+		for(@{$args->{mapInfo}->{planets}}) {
+			my $size = $_->{size};
+			die unless ($size >= $MIN_PLANET_SIZE && $size <= $MAX_PLANET_SIZE);
+			for(@{$_->{neighbors}}) {
+				die unless $_ <= $planetcnt && $_ >= 0; 
+				die if $_ == $planetindex;
+			}
+			++$planetindex;
+		}
+		1;
+	}) {
+		delete $self->{maps}->{$args->{mapInfo}->{name}};
+		return { result => 'badMapInfo' } 
+	}
 	$$map = $args->{mapInfo};
 	return { result => $RESULT_OK };
 }
@@ -238,6 +260,7 @@ sub getMaps {
 
 sub getMapInfo {
 	my ($self, $args) = @_;
+	validate $args, { mapName => 'string' } or return { result => 'formatError' };
 	$self->exists(maps => $args->{mapName}) or return { result => $@ };
 	return { result => $RESULT_OK, 'map' => $self->maps->{$args->{mapName}}};
 }
@@ -249,15 +272,16 @@ sub createGame {
 	validate $args, { 
 		userName => 'string',
 	   	gameName => 'string',
-	   	mapName => 'string' 
+	   	mapName => 'string', 
+		maxPlayers => 'int'
 	} or return { result => 'formatError' };
-	my $game = $self->add(games => $args->{gameName}) or return { result => $@ };
-	unless($self->exists( players => $args->{userName}, maps => $args->{mapName})) {
-		delete $self->games->{$args->{gameName}};
-		return { result => $@ };
-	}
-	if(defined $self->players->{$args->{userName}}->{game}) { return { result => 'alreadyInGame' } }
-	else { $self->players->{$args->{userName}}->{game} = $args->{gameName} }
+	return { result => $unique_error{games} } if $self->exists(games => $args->{gameName});
+	return { result => $@ } unless $self->exists( players => $args->{userName}, maps => $args->{mapName});
+	return { result => 'badMaxPlayers' } unless
+		$args->{maxPlayers} >= $MIN_PLAYERS && $args->{maxPlayers} <= $MAX_PLAYERS; 
+	if(defined $self->players->{$args->{userName}}->{game}) { return { result => 'alreadyInGame' } };
+
+	my $game = $self->add(games => $args->{gameName});
 	$$game = {
 		name	=>	$args->{gameName},
 		'map'	=>	$args->{mapName},
@@ -265,6 +289,7 @@ sub createGame {
 		players		=>	[{ name => $args->{userName}, isReady => 0 }],
 		status		=>	'preparing'
 	};
+	$self->players->{$args->{userName}}->{game} = $args->{gameName};
 	return { result => $RESULT_OK };
 }
 
@@ -292,7 +317,7 @@ sub loadGame {
 
 sub move {
 	my ($self, $args) = @_;
-	validate $args, { userName => 'string' } or return { result => 'formatError' };
+	validate $args, { userName => 'string', planet => 'int' } or return { result => 'formatError' };
 	return { result => $RESULT_OK };
 }
 

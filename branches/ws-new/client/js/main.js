@@ -1,5 +1,6 @@
 function tryEnter() {
-	$('ui').style.display = 'none';
+	//$('ui').style.display = 'none';
+	//$('create_game').style.display = 'none';
 	var c = Cookie.read('user');
 	if(c != null) {
 		$('user').value = c;
@@ -29,7 +30,7 @@ function showLobby() {
 	var f = function () {
 		var data = 'r=' + JSON.encode({'action':'getUsers'});
 		new Request({'url': $('host').value, onSuccess: updateUsers}).send(data);
-	}.periodical(4000);
+	}.periodical(1000);
 }
 
 
@@ -46,6 +47,19 @@ function logout() {
 	$('ui').style.display = 'none';
 	$('hello_dialog').style.display = 'block';
 	Cookie.dispose('user');
+}
+
+function showCreateGame() {
+	$('create_game').style.display = 'block';
+	$('lobby').style.display = 'none';
+	new Request({'url': $('host').value, onSuccess: function(r) {
+				var html = '';
+				JSON.decode(r).maps.each(function(item) { html += '<option value="'+item+'">'+item+'</option>'; });
+				$('mapname').innerHTML = html; },
+			}).send('r={"action":"getMaps"}');
+}
+
+function createGame() {
 }
 
 function clearAll() {

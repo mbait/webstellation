@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
+use lib 't';
 use Test::Webstellation;
 
 test { action => 'clear' }, result => 'ok', 'clear database';
@@ -60,3 +61,24 @@ test
 	result => 'ok', 
 	'createGame';
 test { action => 'getGames' }, games => [qw/Game0 Game1/], 'get games', 'is_deeply';
+test { action => 'getGameInfo', gameName => 'Game1' }, game =>
+	{
+		name => 'Game1', 
+		maxPlayers => 3,
+		'map' => 'Aldebaran',
+		status => 'preparing',
+		players => [{name => 'Jack', isReady => 0}]
+	},
+	'get game info', 'is_deeply';
+test { action => 'register', userName => 'Alex' }, result => 'ok', 'register Alex';
+test { action => 'joinGame', userName => 'Alex', gameName => 'Game1' }, result => 'ok', 'join game';
+
+test { action => 'getGameInfo', gameName => 'Game1' }, game =>
+	{
+		name => 'Game1', 
+		maxPlayers => 3,
+		'map' => 'Aldebaran',
+		status => 'preparing',
+		players => [{name => 'Jack', isReady => 0}, {name => 'Alex', isReady => 0}]
+	},
+	'get game info', 'is_deeply';

@@ -4,7 +4,7 @@ use strict;
 use lib 't';
 use Test::Webstellation;
 
-test { action => 'clear' }, result => 'ok', 'clear database';
+test { action => 'clearAll' }, result => 'ok', 'clear database';
 test { action => 'getGames' }, games => [], 'empty list of games', 'is_deeply';
 test { action => 'register', userName => 'Jack' }, result => 'ok', 'register Jack';
 my $aldebaran =  {

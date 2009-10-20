@@ -4,7 +4,7 @@ use strict;
 use lib 't';
 use Test::Webstellation;
 
-test { action => 'clear' }, result => 'ok', 'clear databse';
+test { action => 'clearAll' }, result => 'ok', 'clear databse';
 test { action => 'getMaps' }, maps => [], 'empty list of maps', 'is_deeply';
 my $aldebaran =  {
 	name => 'Aldebaran', 

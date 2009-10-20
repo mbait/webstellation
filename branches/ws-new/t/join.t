@@ -11,8 +11,7 @@ my $betelgeuse = {
 	planets => [
 		{ x => 0, y => 0, size => 3, neighbors => [] },
 		{ x => 1, y => 0, size => 1, neighbors => [] },
-		{ x => 0, y => 1, size => 1, neighbors => [] },
-	]	
+		{ x => 0, y => 1, size => 1, neighbors => [] }, ]	
 };
 test { action => 'uploadMap', mapInfo => $betelgeuse	}, result =>, 'ok', 'upload Betelgeuse';
 test 

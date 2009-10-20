@@ -62,7 +62,7 @@ A map is represented by undirected, unweighted graph which is a model of the sta
 
 === `PlanetState` ===
 
-|| `owner` || _integer_ || Index of the player who owns the planet (starting from zero) in `players` array of `GameInfo` structure. ||
+|| `owner` || _integer_ || Index of the player who owns the planet (starting from zero) in `players` array of `GameInfo` structure, or _nil_ if the planet is neutral. ||
 || `bases` || _integer_ || The number of bases built on the planet; lays in range from zero to the size of this planet. ||
 
 == Player Related Structures ==
@@ -70,13 +70,13 @@ A map is represented by undirected, unweighted graph which is a model of the sta
 === `PlayerInfo` ===
 
 || `name` || _string_ || Name of the player. ||
-|| `isReady` || _boolean_ || Readiness of the player to start the game (if he has joined one). ||
+|| `isReady` || _boolean_ || Readiness of the player to start the game if he has joined one, or _nil_ if he has not or if game is already playing, so readiness is not relevant. ||
 
 === `PlayerScore` ===
 
-|| `planets` || _integer_ || The number of planets owned by the player. ||
-|| `bases` || _integer_ || The number of bases owned by the player. ||
-|| `influence` || _integer_ || The total influence of the player. ||
+|| `planets` || _integer_ || The number of planets owned by the player, or _nil_ if the player has surrendered. ||
+|| `bases` || _integer_ || The number of bases owned by the player, or _nil_ if the player has surrendered. ||
+|| `influence` || _integer_ || The total influence of the player, or _nil_ if the player has surrendered. ||
 
 == Game Related Structures ==
 
@@ -90,7 +90,7 @@ A map is represented by undirected, unweighted graph which is a model of the sta
 
 === `GameState` ===
 
-|| `active` || _integer_ || Index of the player who makes the turn (starting from zero) in `players` array of `GameInfo` structure. ||
+|| `active` || _integer_ || Index of the player who makes the turn (starting from zero) in `players` array of `GameInfo` structure, or _nil_ if the game has finished. ||
 || `planets` || _array_ || [#PlanetState PlanetState] structures that represent state of the planets; sorted in exactly the same order as `planets` array in `MapInfo` structure. ||
 || `score` || _array_ || [#PlayerScore PlayerScore] structures that represents score of every player in the game; sorted in exactly the same order as `players` array in `GameInfo` structure. ||
 

@@ -273,6 +273,7 @@ Concede a player's defeat.
 || *`!`* || `unknownUser` ||
 || *`!`* || `notInGame` ||
 || *`!`* || `notStarted` ||
+|| *`!`* || `notYourTurn` ||
 
 == Other Queries ==
 

@@ -198,12 +198,19 @@ sub toggleReady {
 	$self->exists(players => $user) or return { result => $@ };
 	return { result => 'notInGame' } unless defined $self->players->{$user}->{game};
 	my $game = $self->games->{$self->players->{$user}->{game}};
-	my %players = map { $_->{name} => $_ } @{$game->{players}};
-	++($players{$user}->{isReady} *= -1);
+	my %players = map { $_->{name} => $_->{isReady} } @{$game->{players}};
+	++($players{$user} *= -1);
 	my $all = 1;
-	$all &&= $players{$_}->{isReady} == 1 for keys %players;
-	$game->{status} = 'playing' if $all;
-	$game->{players} = \%players;
+	for(@{$game->{players}}) {
+		$_->{isReady} = $players{$_->{name}};
+		$all &&= $players{$_->{name}};
+	}
+	if($all) {
+		$game->{status} = 'playing';
+		my $state = $self->states->{$game->{name}} = { active => 0, planets => [], score => [] };
+		push @{$state->{planets}}, { bases => 0 } for @{$self->maps->{$game->{'map'}}->{planets}};
+		push @{$state->{score}}, { planets => 0, bases => 0, influence => 0 } for @{$game->{players}};
+	}
 	
 	return { result => $RESULT_OK };
 }
@@ -322,6 +329,21 @@ sub loadGame {
 sub move {
 	my ($self, $args) = @_;
 	validate $args, { userName => 'string', planet => 'int' } or return { result => 'formatError' };
+	# check user
+	$self->exists(players => $args->{userName}) or return { result => 'notInGame' };
+	defined	$self->games->{$self->players->{$args->{userName}}->{game}} or return { result => 'notInGame' };
+	my $game = $self->games->{$self->players->{$args->{userName}}->{game}};
+	# check game status
+	$game->{status} eq 'playing' or return { result => 'notStarted' };
+	# check turn order
+	my $i = 0;
+	my %players = map { $_->{name} => $i++ } @{$game->{players}};
+	my $state = $self->states->{$game->{name}};
+	$state->{active} == $players{$args->{userName}} or return { result => 'notYourTurn' };
+	# check planet index
+	my $map = $self->maps->{$game->{'map'}};	
+	@{$map->{planets}} > $args->{planet} or return { result => 'badPlanet' };
+
 	return { result => $RESULT_OK };
 }
 

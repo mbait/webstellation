@@ -2,7 +2,7 @@ use strict;
 use lib 't';
 use Test::Webstellation;
 
-test { action => 'clear' }, result => 'ok', 'clear database';
+test { action => 'clearAll' }, result => 'ok', 'clear database';
 test { action => 'register', userName => 'A' }, result => 'ok', 'register A';
 test { action => 'register', userName => 'B' }, result => 'ok', 'register B';
 test { action => 'register', userName => 'C' }, result => 'ok', 'register A';
@@ -25,7 +25,7 @@ test { action => 'uploadMap', mapInfo => {
 test { action => 'createGame', gameName => 'Game1', userName => 'A', mapName => 'Map1', maxPlayers => 2 }, result => 'ok', 'create game';
 test { action => 'joinGame', userName => 'B', gameName => 'Game1' }, result => 'ok', 'B joins to Game1';
 # Let the battle begin!
-test { action => 'move', userName => 'C', result => 'notStarted' }, 'game is not started and out-of-game user tries to move';
+test { action => 'move', userName => 'C', planet => 1 }, result => 'notInGame', 'game is not started and out-of-game user tries to move';
 test { action => 'toggleReady', userName => 'A' }, result => 'ok', 'A toggles ready';
 test { action => 'toggleReady', userName => 'B' }, result => 'ok', 'A toggles ready';
 test { action => 'move', userName => 'B', planet => 0 }, result => 'notYourTurn', 'B tries to move';

@@ -2,7 +2,7 @@ use strict;
 use lib 't';
 use Test::Webstellation;
 
-test { action => "clear" }, result => "ok", "Clearing database. Required first command.", 'is_deeply';
+test { action => "clearAll" }, result => "ok", "Clearing database. Required first command.", 'is_deeply';
 
 test ' incorrectJSON *ROFL* ', result => "formatError", "incorrectJSON", 'is_deeply';
 

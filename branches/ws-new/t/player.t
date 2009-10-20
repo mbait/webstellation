@@ -3,7 +3,7 @@
 use strict;
 use Test::Webstellation;
 
-test { action => 'clear' }, result => 'ok', 'clear database';
+test { action => 'clearAll' }, result => 'ok', 'clear database';
 test { action => 'getUsers' }, users => [], 'empty list of users', 'is_deeply';
 test { action => 'register', userName => 'Jane' },
 	result => 'ok', 'register Jane';

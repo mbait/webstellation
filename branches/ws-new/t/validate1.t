@@ -2,7 +2,7 @@ use strict;
 use lib 't';
 use Test::Webstellation;
 
-test { action => 'clear' }, result => 'ok', 'clear database';
+test { action => 'clearAll' }, result => 'ok', 'clear database';
 test { action => 'register', userName => '' }, result => 'formatError', 'empty user name';
 test { action => 'register', userName => [] }, result => 'formatError', 'array user name';
 test { action => 'register', userName => {} }, result => 'formatError', 'hash user name';

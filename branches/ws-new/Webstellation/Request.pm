@@ -140,7 +140,7 @@ sub dispatch {
 
 # Request methods
 
-sub clear {
+sub clearAll {
 	my $self = shift;
 	for(qw/players games maps/) {
 		for my $key(keys %{$self->$_}) {
@@ -222,7 +222,7 @@ sub leaveGame {
 	$self->exists(players => $user) or return { result => $@ };
 	return { result => 'notInGame' } unless defined $self->players->{$user}->{game};
 	my $players = $self->games->{$self->players->{$user}->{game}}->{players};
-	@$players = [ grep { $_->{name} ne $user } @$players ];
+	@$players = grep { $_->{name} ne $user } @$players;
 	$self->players->{$user}->{game} = undef;
 	return { result => $RESULT_OK };
 }
@@ -319,6 +319,7 @@ sub getGameInfo {
 sub getGameState {
 	my ($self, $args) = @_;
 	validate $args, { gameName => 'string' } or return { result => 'formatError' };
+	$self->games->{$args->{gameName}}->{status} eq 'playing' or return { result => 'notStarted' };
 	return { result => $RESULT_OK, state => $self->states->{$args->{gameName}} };
 }
 
@@ -343,6 +344,11 @@ sub move {
 	# check planet index
 	my $map = $self->maps->{$game->{'map'}};	
 	@{$map->{planets}} > $args->{planet} or return { result => 'badPlanet' };
+
+	my $planet = $state->{planets}->[$args->{planet}];
+	return { result => $RESULT_OK } unless
+		$planet->{owner} &&
+	   	$game->{players}->[$planet->{owner}]->{name} eq $args->{userName};
 
 	return { result => $RESULT_OK };
 }

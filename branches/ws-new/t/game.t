@@ -82,3 +82,18 @@ test { action => 'getGameInfo', gameName => 'Game1' }, game =>
 		players => [{name => 'Jack', isReady => 0}, {name => 'Alex', isReady => 0}]
 	},
 	'get game info', 'is_deeply';
+test { action => 'toggleReady', userName => 'Jack' }, result => 'ok', 'Jack toggles ready';
+test { action => 'toggleReady', userName => 'Jack' }, result => 'ok', 'Jack toggles ready';
+test { action => 'toggleReady', userName => 'Alex' }, result => 'ok', 'Jack toggles ready';
+test { action => 'toggleReady', userName => 'Alex' }, result => 'ok', 'Jack toggles ready';
+test { action => 'toggleReady', userName => 'Jack' }, result => 'ok', 'Jack toggles ready';
+test { action => 'toggleReady', userName => 'Alex' }, result => 'ok', 'Jack toggles ready';
+test { action => 'getGameInfo', gameName => 'Game1' }, game =>
+	{
+		name => 'Game1', 
+		maxPlayers => 3,
+		'map' => 'Aldebaran',
+		status => 'playing',
+		players => [{name => 'Jack', isReady => 1}, {name => 'Alex', isReady => 1}]
+	},
+	'get game info', 'is_deeply';

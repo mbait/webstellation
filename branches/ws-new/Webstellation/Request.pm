@@ -197,9 +197,14 @@ sub toggleReady {
 	my $user = $args->{userName};
 	$self->exists(players => $user) or return { result => $@ };
 	return { result => 'notInGame' } unless defined $self->players->{$user}->{game};
-	my $game = $self->games->{$self->players->{$user}->{game}}->{players};
-	my %players = map { $_->{name} => $_ } @$game;
+	my $game = $self->games->{$self->players->{$user}->{game}};
+	my %players = map { $_->{name} => $_ } @{$game->{players}};
 	++($players{$user}->{isReady} *= -1);
+	my $all = 1;
+	$all &&= $players{$_}->{isReady} == 1 for keys %players;
+	$game->{status} = 'playing' if $all;
+	$game->{players} = \%players;
+	
 	return { result => $RESULT_OK };
 }
 
@@ -295,7 +300,6 @@ sub createGame {
 
 sub getGames {
 	my $self = shift;
-	#print mysort keys %{$self->games};
 	return { result => $RESULT_OK, games => [ sort {$a cmp $b} keys %{$self->games}] };
 }
 

@@ -1,0 +1,85 @@
+body {
+	background: #fffaf0;
+}
+
+table {
+	width: 100%;
+	text-align: center;
+}
+
+thead {
+	font-family: courier;
+}
+
+div.user {
+	font-family: sans-serif;
+	font-size: 10pt;
+	border-style: solid;
+	border-width: .5pt;
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+
+div.game {
+	font-family: sans-serif;
+	font-size: 10pt;
+}
+
+#hello_dialog {
+	text-align: center;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 50px;
+}
+
+#hello_dialog h1 {
+	color: #a9a9a9;
+	font-family: Arial;
+	font-size: 14pt;
+}
+
+#hello_dialog label {
+	font-size: 10pt;
+}
+
+#ui {
+	margin-left: auto;
+	margin-right: auto;
+	background: gray;
+	width: 800px;
+	display: block;
+}
+
+#lobby textarea {
+	margin-top: 5px;
+	width: 90%;
+	height: 50%;
+}
+
+#gamelist {
+	background: green;
+	float: left;
+	width: 80%;
+}
+
+#userlist {
+	text-align: center;
+	margin-left: auto;
+	background: yellow;
+	width: 20%;
+}
+
+#create_game {
+	width: 100%;
+}
+
+#preview {
+	width: 100%;
+	height: 200px;
+	background: yellow;
+}
+
+#maxplayers {
+	width: 20px;
+}

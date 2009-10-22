@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>-=Webstellation=-</title>
+		<link rel="stylesheet" type="text/css" href="style.css" />
+		<!--script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"</script-->
+		<!--script type="text/javascript" src="js/prototype.js"></script-->
+		<script type="text/javascript" src="js/mootools.js"></script>
+		<script type="text/javascript" src="js/main.js"></script>
+	</head>
+	<body onload="tryEnter()">
+		<!--button onclick="clearAll()">clear</button-->
+		<div id="hello_dialog">
+			<h1>Wellcome to Webstellation!</h1>
+			<label for="host">Host IP address</label>
+			<input type="text" name="host" id="host" value="http://localhost:8080">
+			<label for="user">Username</label>
+			<input type="text" name="user" id="user">
+			<button onclick="connect()">Play</button>
+		</div>
+		<div id="ui">
+			<div id="lobby">
+				<div id="lobby_menu">
+					<a href="#" onclick="showCreateGame()">Create game</a>
+					|
+					<a href="#" onclick="logout()">Logout</a>
+				</div>
+				<div id="gamelist">
+					<table id="gametable">
+						<thead>
+							<th>Game name</th>
+							<th>Map name</th>
+							<th>Players</th>
+							<th>State</th>
+						</thead>
+					</table>
+				</div>
+				<div id="userlist">
+				</div>
+			</div>
+			<div id="create_game">
+				<form>
+					<div  id="preview"></div>
+					<label for="mapname">Map name</label>
+					<select id="mapname">
+					</select><br>
+					<label for="gamename">Game name</label><input type id="gamename">
+					<label for="maxplayers">Max players</label><input type id="maxplayers" maxlength="2">
+					<button onlick="createGame">Create</button>
+				</form>
+			</div>
+			<div id="game">
+			</div>
+		</div>
+	</body>
+</html>

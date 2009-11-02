@@ -9,6 +9,7 @@ table {
 
 thead {
 	font-family: courier;
+	font-weight: bold;
 }
 
 div.user {
@@ -66,7 +67,7 @@ div.game {
 #userlist {
 	text-align: center;
 	margin-left: auto;
-	background: yellow;
+	background: blue;
 	width: 20%;
 }
 
@@ -82,4 +83,69 @@ div.game {
 
 #maxplayers {
 	width: 20px;
+}
+
+.frame1_slim {
+	background: snow; 
+	display: inline-block;
+   	padding-left: 1px;
+   	padding-right: 1px;
+}
+
+.frame1_fat {
+	background: snow;
+   	display: inline-block;
+   	padding-top: 2px;
+   	padding-bottom: 2px;
+   	margin-top: -1px;
+   	margin-bottom: -1px;
+}
+
+.frame2_fat {
+	background: silver;
+   	display: inline-block;
+   	padding-left: 2px;
+   	padding-right: 2px;
+   	margin-left: -1px;
+   	margin-right: -1px;
+}
+
+.frame2_slim {
+	background: silver; 
+	margin-top: -2px;
+   	margin-bottom: -2px;
+   	padding-top: 1px;
+   	padding-bottom: 1px;
+}
+
+.frame3_fat {
+	background: darkgray;
+   	display: inline-block;
+   	margin-left: -1px;
+   	margin-right: -1px;
+   	padding-left: 2px;
+   	padding-right: 2px;
+}
+	
+.frame3_slim {
+	background: darkgray;
+   	margin-bottom: -1px;
+   	margin-top: -1px;
+   	padding-top: 3px;
+   	padding-bottom: 3px;
+   	display: inline-block;
+}
+
+.frame_container {
+	background: darkgray;
+   	margin-left: -3px;
+   	margin-right: -3px;
+}
+
+#page {
+	width: 700px;
+	margin:auto;
+	font-family: arial;
+	font-size: 10pt;
+	margin-top: 20px;
 }

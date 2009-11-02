@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>-=Webstellation=-</title>
-		<link rel="stylesheet" type="text/css" href="style.css" />
+		<link rel="stylesheet" type="text/css" href="style.css">
 		<!--script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"</script-->
 		<!--script type="text/javascript" src="js/prototype.js"></script-->
 		<script type="text/javascript" src="js/mootools.js"></script>
@@ -18,39 +18,24 @@
 			<input type="text" name="user" id="user">
 			<button onclick="connect()">Play</button>
 		</div>
-		<div id="ui">
-			<div id="lobby">
-				<div id="lobby_menu">
-					<a href="#" onclick="showCreateGame()">Create game</a>
-					|
-					<a href="#" onclick="logout()">Logout</a>
-				</div>
-				<div id="gamelist">
-					<table id="gametable">
+		<div id="page">
+			<div id="game_list" class="round" >
+				<table style="width: 500px">
+					<tr>
 						<thead>
-							<th>Game name</th>
-							<th>Map name</th>
-							<th>Players</th>
-							<th>State</th>
+							<td>Name</td>
+							<td>Status</td>
+							<td>Action</a>
 						</thead>
-					</table>
-				</div>
-				<div id="userlist">
-				</div>
-			</div>
-			<div id="create_game">
-				<form>
-					<div  id="preview"></div>
-					<label for="mapname">Map name</label>
-					<select id="mapname">
-					</select><br>
-					<label for="gamename">Game name</label><input type id="gamename">
-					<label for="maxplayers">Max players</label><input type id="maxplayers" maxlength="2">
-					<button onlick="createGame">Create</button>
-				</form>
-			</div>
-			<div id="game">
+					</tr>
+					<tr>
+						<td>Game1</td>
+						<td>Preparing</td>
+						<td><a href="#">join</a>
+					</tr>
+				</table>
 			</div>
 		</div>
 	</body>
+	<script type="text/javascript" src="js/ui.js"></script>
 </html>

@@ -2,98 +2,47 @@ body {
 	background: #fffaf0;
 }
 
+a {
+	color: #1E90FF;
+}
+
+button {
+	border: solid;
+	border-width: 1px;
+	position: relative;
+}
+
+input {
+	border: solid;
+	border-width: 1px;
+}
+
 table {
 	width: 100%;
+	margin: auto;
 	text-align: center;
 }
 
 thead {
-	font-family: courier;
 	font-weight: bold;
 }
 
-div.user {
-	font-family: sans-serif;
-	font-size: 10pt;
-	border-style: solid;
-	border-width: .5pt;
-	margin-top: 2px;
-	margin-bottom: 2px;
-}
-
-div.game {
-	font-family: sans-serif;
-	font-size: 10pt;
-}
-
-#hello_dialog {
-	text-align: center;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 50px;
-}
-
-#hello_dialog h1 {
-	color: #a9a9a9;
-	font-family: Arial;
-	font-size: 14pt;
-}
-
-#hello_dialog label {
-	font-size: 10pt;
-}
-
-#ui {
-	margin-left: auto;
-	margin-right: auto;
-	background: gray;
-	width: 800px;
-	display: block;
-}
-
-#lobby textarea {
-	margin-top: 5px;
-	width: 90%;
-	height: 50%;
-}
-
-#gamelist {
-	background: green;
-	float: left;
-	width: 80%;
-}
-
-#userlist {
-	text-align: center;
-	margin-left: auto;
-	background: blue;
-	width: 20%;
-}
-
-#create_game {
-	width: 100%;
-}
-
-#preview {
-	width: 100%;
-	height: 200px;
-	background: yellow;
-}
-
-#maxplayers {
-	width: 20px;
-}
-
-.frame1_slim {
-	background: snow; 
-	display: inline-block;
-   	padding-left: 1px;
-   	padding-right: 1px;
+tr.active {
+	background: #FFD700;
+	border-color: #FFD700;
+	border: solid;
 }
 
 .frame1_fat {
-	background: snow;
+	background: #F5F5DC;
+	display: inline-block;
+   	padding-left: 1px;
+   	padding-right: 1px;
+	margin-top: 2px;
+}
+
+.frame1_slim {
+	background: inherit;
    	display: inline-block;
    	padding-top: 2px;
    	padding-bottom: 2px;
@@ -101,8 +50,9 @@ div.game {
    	margin-bottom: -1px;
 }
 
+
 .frame2_fat {
-	background: silver;
+	background: #B0E0E6;
    	display: inline-block;
    	padding-left: 2px;
    	padding-right: 2px;
@@ -111,7 +61,7 @@ div.game {
 }
 
 .frame2_slim {
-	background: silver; 
+	background: inherit;
 	margin-top: -2px;
    	margin-bottom: -2px;
    	padding-top: 1px;
@@ -119,7 +69,7 @@ div.game {
 }
 
 .frame3_fat {
-	background: darkgray;
+	background: #ADD8E6;
    	display: inline-block;
    	margin-left: -1px;
    	margin-right: -1px;
@@ -128,7 +78,7 @@ div.game {
 }
 	
 .frame3_slim {
-	background: darkgray;
+	background: inherit;
    	margin-bottom: -1px;
    	margin-top: -1px;
    	padding-top: 3px;
@@ -137,10 +87,41 @@ div.game {
 }
 
 .frame_container {
-	background: darkgray;
+	background: inherit;
    	margin-left: -3px;
    	margin-right: -3px;
+	padding: 10px;
 }
+
+.shadow {
+	background: gray;
+	display: inline-block;
+	padding-right: 1px;
+	padding-bottom: 1px;
+}
+
+#auth {
+	text-align: center;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 50px;
+}
+
+#auth h1 {
+	color: #4B0082;
+	font-family: Arial;
+	font-size: 14pt;
+	margin: 0;
+	margin-bottom: 20px;
+}
+
+#auth label {
+	font-size: 10pt;
+	font-family: courier new;
+	font-weight: bold;
+}
+
 
 #page {
 	width: 700px;
@@ -148,4 +129,25 @@ div.game {
 	font-family: arial;
 	font-size: 10pt;
 	margin-top: 20px;
+}
+
+#game_list_content {
+	padding-top: 2px;
+	margin-right: 5px;
+}
+
+#game_users_content {
+	padding-top: 2px;
+}
+
+div.ingame {
+	padding: 5px;
+}
+
+#users_content {
+	padding-top: 2px;
+}
+
+#users a {
+	padding: 5px;
 }

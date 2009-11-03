@@ -18,7 +18,6 @@ input {
 }
 
 table {
-	width: 100%;
 	margin: auto;
 	text-align: center;
 }
@@ -108,12 +107,12 @@ tr.active {
 	margin-top: 50px;
 }
 
-#auth h1 {
-	color: #4B0082;
-	font-family: Arial;
+#title {
+	font-family: arial;
 	font-size: 14pt;
-	margin: 0;
-	margin-bottom: 20px;
+	font-weight: bold;
+	color: #4B0082;
+	margin-bottom: 10px;
 }
 
 #auth label {
@@ -124,8 +123,7 @@ tr.active {
 
 
 #page {
-	width: 700px;
-	margin:auto;
+	text-align: center;
 	font-family: arial;
 	font-size: 10pt;
 	margin-top: 20px;
@@ -148,6 +146,6 @@ div.ingame {
 	padding-top: 2px;
 }
 
-#users a {
-	padding: 5px;
+#users {
+	word-spacing: 5px;
 }

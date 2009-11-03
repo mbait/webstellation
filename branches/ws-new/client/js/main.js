@@ -1,67 +1,21 @@
+var host;
+var user;
+
 function tryEnter() {
-	//$('ui').style.display = 'none';
-	//$('create_game').style.display = 'none';
-	var c = Cookie.read('user');
-	if(c != null) {
-		$('user').value = c;
-		showLobby();
-	}
+	$(document).ready(function() {
+			$('#page').hide();
+		});
+	alert('all\'s ok');
+	alert($.toJSON({"action":"register", "userName":user}, 1, 1));
 }
 
 function connect() {
-	//new Request.JSON({'url': host, onSuccess: showLobby}).send({ r: {'action': 'register', 'userName': user} });
-	var data = 'r=' + JSON.encode({'action':'register', 'userName': $('user').value});
-	new Request({'url': $('host').value, onSuccess: onConnect}).send(data);
-}
-
-function onConnect(r) {
-	var response = JSON.decode(r);
-	if(response.result != 'ok') {
-		alert('This username is obtained by another user');
-		return;
-	}
-	Cookie.write('user', $('user').value);
-	showLobby();
-}
-
-function showLobby() {
-	$('hello_dialog').style.display = 'none';
-	$('ui').style.display = 'block';
-	var f = function () {
-		var data = 'r=' + JSON.encode({'action':'getUsers'});
-		new Request({'url': $('host').value, onSuccess: updateUsers}).send(data);
-	}.periodical(1000);
-}
-
-
-function updateUsers(r) {
-	var data = JSON.decode(r);
-	var html = '';
-	data.users.each(function(item) { html += '<div class="user">' + item + '</div>'; });
-	$('userlist').innerHTML = html;
-}
-
-function logout() {
-	var data = 'r=' + JSON.encode({'action': 'logout', 'userName': $('user').value});
-	new Request({'url': $('host').value}).send(data);
-	$('ui').style.display = 'none';
-	$('hello_dialog').style.display = 'block';
-	Cookie.dispose('user');
-}
-
-function showCreateGame() {
-	$('create_game').style.display = 'block';
-	$('lobby').style.display = 'none';
-	new Request({'url': $('host').value, onSuccess: function(r) {
-				var html = '';
-				JSON.decode(r).maps.each(function(item) { html += '<option value="'+item+'">'+item+'</option>'; });
-				$('mapname').innerHTML = html; },
-			}).send('r={"action":"getMaps"}');
-}
-
-function createGame() {
-}
-
-function clearAll() {
-	new Request({'url': $('host').value}).send('r={"action":"clear"}');
+	host = $('#host').val();
+	user = $('#user').val();
+	$.ajax({
+		type: 'POST',
+		url: host,
+		data: ({r: $.toJSON({'action':'register','userName': user}, 1, 1)}),
+		success: function(data) { alert(data); }
+	});
 }

@@ -5,26 +5,27 @@
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<!--script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"</script-->
 		<!--script type="text/javascript" src="js/prototype.js"></script-->
-		<!--script type="text/javascript" src="js/mootools.js"></script>
-		<script type="text/javascript" src="js/main.js"></script-->
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/jquery-json.js"></script>
+		<script type="text/javascript" src="js/main.js"></script>
 	</head>
 	<body onload="tryEnter()">
 		<!--button onclick="clearAll()">clear</button-->
 		<div id="auth" class="round">
-			<h1>Wellcome to Webstellation!</h1>
+			<div id="title">Wellcome to Webstellation!</div>
 			<label for="host">Host IP address</label>
 			<div class="shadow"><input type="text" name="host" id="host" value="http://localhost:8080"></div>
 			<label for="user">Username</label>
 			<div class="shadow"><input type="text" name="user" id="user"></div>
 			<div class="shadow">
-				<button id="play"  onmousedown="btnDown('play')" onmouseup="btnUp('play')" onmouseout="btnUp('play')">Play</button>
+				<button id="play" onclick="connect()" onmousedown="btnDown('play')" onmouseup="btnUp('play')" onmouseout="btnUp('play')">Play</button>
 			</div>
 		</div>
 		<div id="page">
 			<!-- NOTE!!! All relative style attrs will be ignored due to "round" class hack -->
 			<div id="game_list_content">
 				<div id="game_list" class="round" >
-					<table >
+					<table style="width: 700px">
 						<tr>
 							<thead>
 								<td>Name</td>
@@ -32,7 +33,7 @@
 								<td>Action</a>
 							</thead>
 						</tr>
-						<tr>
+						<!--tr>
 							<td>Game1</td>
 							<td>Preparing</td>
 							<td><a href="#">Join</a>
@@ -41,39 +42,15 @@
 							<td>Game2</td>
 							<td>Playing</td>
 							<td><a href="#">Leave</a></td>
-						</tr>
+						</tr-->
 					</table>
-					<div style="width: 100%; height: 1px; background: #0000CD; margin: auto; margin-top: 10px"></div>
-					<div style="width: 100%; height: 1px; background: #1E90FF; margin: auto; margin-bottom: 10px"></div>
+					<div style="width: 100%; height: 1px; background: #1E90FF; margin: auto; margin-top: 10px"></div>
+					<div style="width: 100%; height: 1px; background: gray;  margin: auto; margin-bottom: 10px; margin-left: 1px"></div>
 					<div id="users">
-						<a href="#">Vasya</a>
-						<a href="#">Vasya</a>
-						<a href="#">Vasya</a>
-						<a href="#">Vasya</a>
-						<a href="#">Petay</a>
-						<a href="#">Vasya2</a>
-						<a href="#">Vasya3</a>
-						<a href="#">Petay</a>
-						<a href="#">Vasya2</a>
-						<a href="#">Vasya3</a>
-						<a href="#">Petay</a>
-						<a href="#">Vasya2</a>
-						<a href="#">Vasya3</a>
-						<a href="#">Petay</a>
-						<a href="#">Vasya2</a>
-						<a href="#">Vasya3</a>
 					</div>
 				</div>
 			</div>
 			<div id="game_users_content">
-				<div id="game_users" class="round">
-					<div class="title">In game:</div>
-					<div class="ingame">Vasya</div>
-					<div class="ingame">Petay</div>
-					<div class="ingame">Marusya</div>
-					<div class="ingame">Marusya</div>
-					<div class="ingame">Marusya</div>
-				</div>
 			</div>
 		</div>
 	</body>

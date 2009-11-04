@@ -169,6 +169,13 @@ sub logout {
 	my ($self, $args) = @_;
 	validate $args, { userName => 'string' } or return { result => 'formatError' };
 	$self->delete(players => $args->{userName}) or return { result => $@ };
+	# and all his games too 
+	# warning !!! this is temporary code and it must be removed
+	# as soon as possible
+	for(keys %{$self->games}) { 
+		my %users = map { $_->{name} => 0 } @{$self->games->{$_}->{players}};
+		delete $self->games->{$_} if exists $users{$args->{userName}};
+	}
 	return { result => $RESULT_OK };
 }
 

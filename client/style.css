@@ -3,7 +3,7 @@ body {
 }
 
 a {
-	color: #1E90FF;
+	color: blue;
 }
 
 button {
@@ -20,16 +20,19 @@ input {
 table {
 	margin: auto;
 	text-align: center;
+	font-family: sans;
+	font-size: 9pt;
 }
 
 thead {
 	font-weight: bold;
 }
 
-tr.active {
+#games tr:hover {
 	background: #FFD700;
 	border-color: #FFD700;
 	border: solid;
+	cursor: pointer;
 }
 
 .frame1_fat {
@@ -37,7 +40,6 @@ tr.active {
 	display: inline-block;
    	padding-left: 1px;
    	padding-right: 1px;
-	margin-top: 2px;
 }
 
 .frame1_slim {
@@ -89,7 +91,8 @@ tr.active {
 	background: inherit;
    	margin-left: -3px;
    	margin-right: -3px;
-	padding: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
 }
 
 .shadow {
@@ -97,6 +100,23 @@ tr.active {
 	display: inline-block;
 	padding-right: 1px;
 	padding-bottom: 1px;
+}
+
+.hr_outer {
+	width: 100%;
+   	height: 1px;
+   	background: #1E90FF;
+   	margin: auto;
+   	margin-top: 10px;
+}
+
+.hr_inner {
+	width: 100%;
+   	height: 1px;
+   	background: gray;
+  	margin: auto;
+   	margin-bottom: 10px;
+   	margin-left: 1px;
 }
 
 #auth {
@@ -123,19 +143,29 @@ tr.active {
 
 
 #page {
-	text-align: center;
 	font-family: arial;
 	font-size: 10pt;
+	margin: auto;
 	margin-top: 20px;
 }
 
-#game_list_content {
-	padding-top: 2px;
-	margin-right: 5px;
+#create_game {
+	margin-top: 10px;
 }
 
-#game_users_content {
+#game_list_content {
+	width: 80%;
+	margin: auto;
 	padding-top: 2px;
+}
+
+#game_list {
+	background: red;
+	display: inline-block;
+}
+
+#game_users {
+	display: inline-block;
 }
 
 div.ingame {
@@ -147,5 +177,6 @@ div.ingame {
 }
 
 #users {
+	text-align: left;
 	word-spacing: 5px;
 }

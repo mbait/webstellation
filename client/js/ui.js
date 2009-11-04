@@ -19,9 +19,17 @@ function addFrame(name) {
 	obj.innerHTML = div;
 }
 
-var a = document.getElementsByTagName('div');
-for(var i = 0; i< a.length; ++i) {
-	if(a[i].className == 'round') {
-		addFrame(a[i].id);
-	}
+function toggleForm(id) {
+	$('#'+id).slideToggle('normal');
 }
+
+$(document).ready(function() {
+		$('.round').wrapInner('<div class="frame_container"></div>');
+		$('.round').wrapInner('<div class="frame3_slim"></div>');
+		$('.round').wrapInner('<div class="frame3_fat"></div>');
+		$('.round').wrapInner('<div class="frame2_slim"></div>');
+		$('.round').wrapInner('<div class="frame2_fat"></div>');
+		$('.round').wrapInner('<div class="frame1_slim"></div>');
+		$('.round').wrapInner('<div class="frame1_fat"></div>');
+		$('.dd_form').each(function(ind, item) { $(item).hide() });
+	});

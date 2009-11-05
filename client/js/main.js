@@ -81,9 +81,21 @@ function viewGame(id) {
 	render();
 }
 
-function toggleReady(id) {
+function toggleReady() {
 	doUpdate = false;
-	sendRequest({action: 'toggleReady', userName: id}, function(r) { doUpdate = true });
+	sendRequest({action: 'toggleReady', userName: user}, function(r) { 
+			doUpdate = true;
+			refresh();
+			render();
+		});
+}
+
+function joinGame(id) {
+	sendRequest({action: 'joinGame', userName: user, gameName: id});
+}
+
+function leaveGame() {
+	sendRequest({action: 'leaveGame', userName: user});
 }
 
 function render() {
@@ -107,23 +119,26 @@ function render() {
 	if(gamestate.games) {
 		$.each(gamestate.games, function(ind, item) {
 			var state = 'n/a';
-			var action = 'n/a';
+			var action = 'Join';
+			var onclick = ' onclick="joinGame(\''+item+'\')" ';
 			if(gamestate.game[item] != null) { 
 				state = gamestate.game[item].status;
 			} 
+			var leave = '\n<a href="#" onclick="leaveGame()">Leave</a>';
 			$('#games tbody').append('<tr onclick="viewGame(\''+item+'\')"><td>'+item+'</td>' + 
-				state + '</td><td><a href="#">'+action+'</a></td></tr>');
+				state + '</td><td><a href="#"' + onclick + '>'+action+'</a>' + leave + '</td></tr>');
 		});
 	}
 	$('#game_users').html('');
-	if(curgameId && gamestate.game[curgameId] != null) {
+	if(curgameId && gamestate.game[curgameId] != null && doUpdate) {
 		$(gamestate.game[curgameId].players).each(function(ind, val) {
-				var checked = val.isReady?'checked':'';
-				$('#game_users').append('<div><input type="checkbox" ' + 
-					checked + ' onclick="toggleReady(\''+val.name+'\')">'+val.name+'</div>')
+				var checked = val.isReady?' checked ':'';
+				var onclick = val.name == user?' onclick="toggleReady()" ':' class="disabled" disabled="true" ';
+				$('#game_users').append('<div style="color: inherit"><input type="checkbox"' + 
+					checked + onclick + '>' + val.name+'</div>')
 			});
 	}
-	setTimeout('render()', 2000);
+	if(doUpdate) { setTimeout('render()', 2000) }
 }
 
 function refresh() {
@@ -152,7 +167,7 @@ function refresh() {
 				})
 			});
 		});
-	setTimeout('refresh()', 4000);
+	if(doUpdate) {  setTimeout('refresh()', 4000) }
 }
 
 function logout() {

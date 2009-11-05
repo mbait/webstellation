@@ -212,7 +212,7 @@ sub toggleReady {
 		$_->{isReady} = $players{$_->{name}};
 		$all &&= $players{$_->{name}};
 	}
-	if($all) {
+	if($all && @{$game->{players}} > 1) {
 		$game->{status} = 'playing';
 		my $state = $self->states->{$game->{name}} = { active => 0, planets => [], score => [] };
 		push @{$state->{planets}}, { bases => 0 } for @{$self->maps->{$game->{'map'}}->{planets}};

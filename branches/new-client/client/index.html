@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>-=Webstellation=-</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<!--script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"</script-->
+		<!--script type="text/javascript" src="js/prototype.js"></script-->
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/jquery-json.js"></script>
+		<script type="text/javascript" src="js/main.js"></script>
+	</head>
+	<body onload="tryEnter()">
+		<!--button onclick="clearAll()">clear</button-->
+		<div id="auth" class="round">
+			<div id="title">Wellcome to Webstellation!</div>
+			<label for="host">Host IP address</label>
+			<div class="shadow"><input type="text" name="host" id="host" value="http://localhost:8080"></div>
+			<label for="user">Username</label>
+			<div class="shadow"><input type="text" name="user" id="user" value="qwe"></div>
+			<div class="shadow">
+				<button id="play" onclick="connect()" onmousedown="btnDown('play')" onmouseup="btnUp('play')" onmouseout="btnUp('play')">Play</button>
+			</div>
+		</div>
+		<div id="page">
+			<!-- NOTE!!! All relative style attrs will be ignored due to "round" class hack <- this may be false -->
+			<div id="game_list_content">
+				<table><tr align="left"><td>
+					<a class="round" href="#" onclick="toggleForm('create_game')">Create game</a>
+					<a class="round" href="#">Upload map</a>
+					<a class="round" href="#" onclick="logout()">Logout</a>
+				</td></tr>
+				<tr valign="top">
+				<td>
+				<div id="game_list" class="round" >
+					<div class="dd_form" id="create_game">
+						<label for="game_name">Name</label>
+						<div class="shadow"><input id="game_name"></div>
+						<label for="max_players">Max players</label>
+						<div class="shadow"><input id="max_players" maxlength="2" style="width: 20px"></div>
+						<label for="map_name">Map</label>
+						<select id="map_name">
+						</select>
+						<div class="shadow">
+							<button id="btn_create_game" onclick="createGame()" onmousedown="btnDown('btn_create_game')" onmouseup="btnUp('btn_create_game')" onmouseout="btnUp('btn_create_game')">Create</button>
+						</div>
+						<div class="shadow"><button id="btn_cancel_game" onclick="toggleForm('create_game')" onmousedown="btnDown('btn_cancel_game')" onmouseup="btnUp('btn_cancel_game')" onmouseout="btnUp('btn_cancel_game')">Cancel</button</div>
+						<div class="hr_outer"></div>
+						<div class="hr_inner"></div>
+					</div>
+					<table id="games" style="width: 700px">
+						<tr>
+							<thead>
+								<td>Name</td>
+								<td>Status</td>
+								<td>Action</a>
+							</thead>
+						</tr>
+						<!--tr>
+							<td>Game1</td>
+							<td>Preparing</td>
+							<td><a href="#">Join</a>
+						</tr>
+						<tr class="active">
+							<td>Game2</td>
+							<td>Playing</td>
+							<td><a href="#">Leave</a></td>
+						</tr-->
+					</table>
+					<div class="hr_outer"></div>
+					<div class="hr_inner"></div>
+					<div id="users">
+					</div>
+				</div></td>
+				<td style="width: 200px" align="left">
+					<div id="game_users_frame" class="round">
+						<div style="width: 200px">
+							<div style="text-align: center">Game players:</div>
+							<div id="game_users">
+							</div>
+						</div>
+					</div>
+				</td>
+				</tr></table>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/ui.js"></script>
+</html>

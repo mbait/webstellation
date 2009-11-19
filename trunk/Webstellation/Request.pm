@@ -169,6 +169,13 @@ sub logout {
 	my ($self, $args) = @_;
 	validate $args, { userName => 'string' } or return { result => 'formatError' };
 	$self->delete(players => $args->{userName}) or return { result => $@ };
+	# and all his games too 
+	# warning !!! this is temporary code and it must be removed
+	# as soon as possible
+	for(keys %{$self->games}) { 
+		my %users = map { $_->{name} => 0 } @{$self->games->{$_}->{players}};
+		delete $self->games->{$_} if exists $users{$args->{userName}};
+	}
 	return { result => $RESULT_OK };
 }
 
@@ -205,7 +212,7 @@ sub toggleReady {
 		$_->{isReady} = $players{$_->{name}};
 		$all &&= $players{$_->{name}};
 	}
-	if($all) {
+	if($all && @{$game->{players}} > 1) {
 		$game->{status} = 'playing';
 		my $state = $self->states->{$game->{name}} = { active => 0, planets => [], score => [] };
 		push @{$state->{planets}}, { bases => 0 } for @{$self->maps->{$game->{'map'}}->{planets}};

@@ -10,6 +10,10 @@ use HTTP::Response;
 use Webstellation::Request;
 use Data::Dumper;
 use URI::Escape;
+use IO::Handle;
+
+# Enabled autoflush
+$| = 1;
 
 my %conf;
 if(open FH, 'server.conf') {
@@ -56,12 +60,17 @@ while(my $c = $d->accept) {
 		warn "Request variable is missing\n";
 		next;
 	}
-	my $json = uri_unescape $1;
-	#print "$json\n";
-	print  "-> $1\n";
-	print "$json\n\n";
+	# a little hack to avoid of unescaping whitespaces as '+'
+	my $param = $1;
+	$param =~ s/[+]/ /g;
+	my $json = uri_unescape $param;
+	print  "-> $param\n";
+	print "$json\n";
+	$json = $g->dispatch($json);
+	print "<- $json\n\n";
+
 	$c->send_response(HTTP::Response->new(200, status_message(200),
-		   HTTP::Headers->new(Content_Type => 'text/plain'), $g->dispatch($json)));
+		   HTTP::Headers->new(Content_Type => 'text/plain'), $json));
 	$c->close;
 	#exit;
 }

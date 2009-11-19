@@ -2,30 +2,124 @@ body {
 	background: #fffaf0;
 }
 
+a {
+	color: blue;
+}
+
+button {
+	border: solid;
+	border-width: 1px;
+	position: relative;
+}
+
+input {
+	border: solid;
+	border-width: 1px;
+}
+
 table {
-	width: 100%;
+	margin: auto;
 	text-align: center;
+	font-family: sans;
+	font-size: 9pt;
 }
 
 thead {
-	font-family: courier;
+	font-weight: bold;
 }
 
-div.user {
-	font-family: sans-serif;
-	font-size: 10pt;
-	border-style: solid;
-	border-width: .5pt;
-	margin-top: 2px;
-	margin-bottom: 2px;
+#games tr:hover {
+	background: #FFD700;
+	border-color: #FFD700;
+	border: solid;
+	cursor: pointer;
 }
 
-div.game {
-	font-family: sans-serif;
-	font-size: 10pt;
+.frame1_fat {
+	background: #F5F5DC;
+	display: inline-block;
+   	padding-left: 1px;
+   	padding-right: 1px;
 }
 
-#hello_dialog {
+.frame1_slim {
+	background: inherit;
+   	display: inline-block;
+   	padding-top: 2px;
+   	padding-bottom: 2px;
+   	margin-top: -1px;
+   	margin-bottom: -1px;
+}
+
+
+.frame2_fat {
+	background: #B0E0E6;
+   	display: inline-block;
+   	padding-left: 2px;
+   	padding-right: 2px;
+   	margin-left: -1px;
+   	margin-right: -1px;
+}
+
+.frame2_slim {
+	background: inherit;
+	margin-top: -2px;
+   	margin-bottom: -2px;
+   	padding-top: 1px;
+   	padding-bottom: 1px;
+}
+
+.frame3_fat {
+	background: #ADD8E6;
+   	display: inline-block;
+   	margin-left: -1px;
+   	margin-right: -1px;
+   	padding-left: 2px;
+   	padding-right: 2px;
+}
+	
+.frame3_slim {
+	background: inherit;
+   	margin-bottom: -1px;
+   	margin-top: -1px;
+   	padding-top: 3px;
+   	padding-bottom: 3px;
+   	display: inline-block;
+}
+
+.frame_container {
+	background: inherit;
+   	margin-left: -3px;
+   	margin-right: -3px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.shadow {
+	background: gray;
+	display: inline-block;
+	padding-right: 1px;
+	padding-bottom: 1px;
+}
+
+.hr_outer {
+	width: 100%;
+   	height: 1px;
+   	background: #1E90FF;
+   	margin: auto;
+   	margin-top: 10px;
+}
+
+.hr_inner {
+	width: 100%;
+   	height: 1px;
+   	background: gray;
+  	margin: auto;
+   	margin-bottom: 10px;
+   	margin-left: 1px;
+}
+
+#auth {
 	text-align: center;
 	display: block;
 	margin-left: auto;
@@ -33,53 +127,56 @@ div.game {
 	margin-top: 50px;
 }
 
-#hello_dialog h1 {
-	color: #a9a9a9;
-	font-family: Arial;
+#title {
+	font-family: arial;
 	font-size: 14pt;
+	font-weight: bold;
+	color: #4B0082;
+	margin-bottom: 10px;
 }
 
-#hello_dialog label {
+#auth label {
 	font-size: 10pt;
+	font-family: courier new;
+	font-weight: bold;
 }
 
-#ui {
-	margin-left: auto;
-	margin-right: auto;
-	background: gray;
-	width: 800px;
-	display: block;
-}
 
-#lobby textarea {
-	margin-top: 5px;
-	width: 90%;
-	height: 50%;
-}
-
-#gamelist {
-	background: green;
-	float: left;
-	width: 80%;
-}
-
-#userlist {
-	text-align: center;
-	margin-left: auto;
-	background: yellow;
-	width: 20%;
+#page {
+	font-family: arial;
+	font-size: 10pt;
+	margin: auto;
+	margin-top: 20px;
 }
 
 #create_game {
-	width: 100%;
+	margin-top: 10px;
 }
 
-#preview {
-	width: 100%;
-	height: 200px;
-	background: yellow;
+#game_list_content {
+	width: 80%;
+	margin: auto;
+	padding-top: 2px;
 }
 
-#maxplayers {
-	width: 20px;
+#game_list {
+	background: red;
+	display: inline-block;
+}
+
+#game_users {
+	display: inline-block;
+}
+
+div.ingame {
+	padding: 5px;
+}
+
+#users_content {
+	padding-top: 2px;
+}
+
+#users {
+	text-align: left;
+	word-spacing: 5px;
 }

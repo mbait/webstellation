@@ -59,9 +59,10 @@ while(my $c = $d->accept) {
 	my $json = uri_unescape $1;
 	#print "$json\n";
 	print  "-> $1\n";
-	print "$json\n\n";
+	my $res = $g->dispatch($json);
+	print "<- $res\n\n";
 	$c->send_response(HTTP::Response->new(200, status_message(200),
-		   HTTP::Headers->new(Content_Type => 'text/plain'), $g->dispatch($json)));
+		   HTTP::Headers->new(Content_Type => 'text/plain'), $res));
 	$c->close;
 	#exit;
 }

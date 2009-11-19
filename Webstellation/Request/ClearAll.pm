@@ -3,12 +3,13 @@ package Webstellation::Request::ClearAll;
 use strict;
 use warnings;
 
-sub new {
-	my $inv = shift;
-	my $class = ref $inv || $inv;
-	my $self;
-	bless $self, $class;
-	$self->{db} + 
+use Webstellation::Request::Base;
+our @ISA = 'Webstellation::Request::Base';
+
+sub run {
+	my ($self, $db) = @_;
+	$db->write(map { $_ => {} } qw/users maps games states/);
+	return { result => 'ok' };
 }
 
 1;

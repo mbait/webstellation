@@ -21,11 +21,11 @@
 						<td><input id="host"></td>
 					</tr>
 					<tr>
-						<td align="right"><label for="login">User name</label></td>
-						<td><input id="login"></td>
+						<td align="right"><label for="user">User name</label></td>
+						<td><input id="user"></td>
 					</tr>
 					<tr><td align="center" colspan="2">
-							<button onclick="client.connect($('host').value, $('login').value)">Connect</button>
+							<button onclick="client.connect(ui.loginInfo())">Connect</button>
 					</td></tr>
 				</table>
 			</td></tr>
@@ -37,26 +37,26 @@
 					</div>
 			</td></tr>
 				<tr><td id="create_game">
-					<label for="game_name">name</label>
-					<input id="game_name">
-					<label for="map_name">map</label>
-					<select id="map_name">
-						<option value=""></option>
+					<label for="gamename">name</label>
+					<input id="gamename">
+					<label for="mapname">map</label>
+					<select id="mapname">
+						<option value=""></option><!-- this is for validator -->
 					</select>
-					<label for="max_players">max players</label>
-					<select id="max_players">
+					<label for="maxplayers">max players</label>
+					<select id="maxplayers">
 						<option value="2">2</option>
 						<option value="2">3</option>
 						<option value="2">4</option>
 						<option value="2">5</option>
 						<option value="2">6</option>
 					</select>
-					<button id="btn_creategame">Create</button>
-					<button id="btn_cancel_game">Cancel</button>
+					<button id="btn_creategame" onclick="client.createGame(ui.newGameInfo())">Create</button>
+					<button id="btn_cancel_game" onclick="ui.toggle('create_game')">Cancel</button>
 				</td></tr>
 				<tr>
 				<td>
-					<table id="games" style="width: 700px">
+					<table id="tbl_games" style="width: 700px">
 						<thead>
 							<tr>
 								<td>Name</td>
@@ -64,6 +64,8 @@
 								<td>Action</td>
 							</tr>
 						</thead>
+						<tbody id="games">
+						</tbody>
 					</table>
 				</td>
 				<td style="width: 200px" align="left">
@@ -73,7 +75,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td></td>
+				<td id="userlist" align="left"></td>
 			</tr>
 
 		</table>

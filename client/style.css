@@ -28,7 +28,7 @@ thead {
 	font-weight: bold;
 }
 
-#games tr:hover {
+.hl:hover {
 	background: #FFD700;
 	border-color: #FFD700;
 	border: solid;
@@ -119,14 +119,6 @@ thead {
    	margin-left: 1px;
 }
 
-#auth {
-	text-align: center;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 50px;
-}
-
 #title {
 	font-family: arial;
 	font-size: 14pt;
@@ -134,13 +126,6 @@ thead {
 	color: #4B0082;
 	margin-bottom: 10px;
 }
-
-#auth label {
-	font-size: 10pt;
-	font-family: courier new;
-	font-weight: bold;
-}
-
 
 #page {
 	font-family: arial;
@@ -160,7 +145,6 @@ thead {
 }
 
 #game_list {
-	background: red;
 	display: inline-block;
 }
 

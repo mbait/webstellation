@@ -30,7 +30,29 @@ var WSUI = new Class.create({
 			else if(data.games != null) {
 				var obj = $('games');
 				obj.update('');
-				$A(data.games).each(function(val) {obj.insert(new Element('tr').update(new Element('td').update(val)))});
+				$A(data.games).each(function(val) {
+						var tag = new Element('tr');
+						tag.update(new Element('td').update(val));
+						tag.insert(new Element('td').update('n/a'));
+						tag.insert(new Element('td').update('n/a'));
+						obj.insert(tag);
+					});
+				this.games = $A(data.games);
+			}
+			else if(data.game != null) {
+				var obj = $('games');
+				obj.update('');
+				var game = data.game;
+				this.games.each(function(val) {
+						var tag = new Element('tr');
+						//var state = game.name == val ? game.status : 'n/a';
+						var state = game.status;
+						var action = 'n/a';
+						tag.update(new Element('td').update(val));
+						tag.insert(new Element('td').update(state));
+						tag.insert(new Element('td').update(action));
+						obj.insert(tag);
+					});
 			}
 		},
 

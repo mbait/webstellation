@@ -2,6 +2,7 @@ var WSClient = new Class.create({
 	initialize: function(obj) {
 		this.updateTime = 1000;
 		this.ui_handler = obj;
+		this.left_gameInfoUpdate = 0;
 	},
 	// helper methods
 	sendRequest: function(data, callback) {
@@ -43,17 +44,29 @@ var WSClient = new Class.create({
 				},
 
 	onUpdateReceive: function(data) {
-						 this.ui_handler.render(data);
-						 if(data.games != null) {
-							 var obj = this;
-							 $A(data.games).each(function(val) {
-									 obj.sendRequest({action: 'getGameInfo', gameName: val},
-										 function(data) {
-										 	obj.ui_handler.render(data);
-										 })
-									 });
+						 if(data.games != null ) {
+							 if(this.canUpdateGames()) {
+								 this.startGameUpdate($A(data.games).size());
+								 var obj = this;
+								 $A(data.games).each(function(val) {
+										 obj.sendRequest({action: 'getGameInfo', gameName: val},
+											 function(data) {
+												obj.onGameInfo(data)
+											 })
+										 });
+							 }
+						 }
+						 else {
+							 this.ui_handler.render(data);
 						 }
 					 },
+
+	onGameInfo: function(data) {
+					this.receiveGameInfo(data);
+					if(this.canUpdateGames()) {
+						this.ui_handler.render({games: this.gameInfo});
+					}
+				},
 	// updates
 	startUpdate: function() {
 					 this.doUpdate = true;
@@ -67,5 +80,23 @@ var WSClient = new Class.create({
 					 var obj = this;
 					 this.sendRequest({action: 'get' + list}, function(data) {obj.onUpdateReceive(data)});
 					 setTimeout(function() {obj.update(list)}, this.updateTime);
-				 }
+				 },
+	// gameInfo updates
+	startGameUpdate: function(cnt) {
+						 this.left_gameInfoUpdate = cnt;
+						 this.gameInfo = {};
+					 },
+
+	canUpdateGames: function() {
+						return this.left_gameInfoUpdate == 0;
+					},
+
+	receiveGameInfo: function(data) {
+						this.gameInfo[data.game.name] = {
+							name: data.game.name,
+							'status': data.game.status,
+							action: 'n/a'	  
+						};
+						this.left_gameInfoUpdate = this.left_gameInfoUpdate - 1;
+					}
 });

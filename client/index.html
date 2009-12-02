@@ -5,6 +5,7 @@
 		<title>-=Webstellation=-</title>
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<script type="text/javascript" src="js/prototype.js"></script>
+		<script type="text/javascript" src="js/raphael.js"></script>
 		<!--script type="text/javascript" src="js/jquery.js"></script>
 		<script type="text/javascript" src="js/jquery-json.js"></script-->
 		<script type="text/javascript" src="js/client.js"></script>
@@ -46,10 +47,10 @@
 					<label for="maxplayers">max players</label>
 					<select id="maxplayers">
 						<option value="2">2</option>
-						<option value="2">3</option>
-						<option value="2">4</option>
-						<option value="2">5</option>
-						<option value="2">6</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
 					</select>
 					<button id="btn_creategame" onclick="client.createGame(ui.newGameInfo())">Create</button>
 					<button id="btn_cancel_game" onclick="ui.toggle('create_game')">Cancel</button>
@@ -60,6 +61,7 @@
 						<thead>
 							<tr>
 								<td>Name</td>
+								<td>Players</td>
 								<td>Status</td>
 								<td>Action</td>
 							</tr>
@@ -70,14 +72,29 @@
 				</td>
 				<td style="width: 200px" align="left">
 					<table>
-						<tr><th>Game lobby</th></tr>
+						<thead>
+							<tr><td valign="top" colspan="2">Game lobby</td></tr>
+						</thead>
+						<tbody id="gameusers">
+						</tbody>
 					</table>
 				</td>
 			</tr>
 			<tr>
 				<td id="userlist" align="left"></td>
 			</tr>
-
+		</table>
+		<table width="100%" border="solid">
+			<tr>
+				<td id="map"></td>
+				<td valign="top" id="score">
+					<table>
+						<thead>
+							<tr><td colspan="2">Score</td></tr>
+						</thead>
+					</table>
+				</td>
+			</tr>
 		</table>
 	</body>
 </html>

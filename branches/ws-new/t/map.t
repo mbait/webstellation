@@ -36,9 +36,9 @@ test { action => 'uploadMap', mapInfo => $betelgeuse	}, result =>, 'ok', 'upload
 my $cassiopeia = {
 	name => 'Cassiopeia', 
 	planets => [
-		{ x => 0, y => 0, size => 3, neighbors => [] },
-		{ x => 1, y => 0, size => 1, neighbors => [] },
-		{ x => 0, y => 1, size => 1, neighbors => [] },
+		{ x => 0, y => 0, size => 3, neighbors => [1, 2] },
+		{ x => 1, y => 0, size => 1, neighbors => [0] },
+		{ x => 0, y => 1, size => 1, neighbors => [0] },
 	]	
 };
 test { action => 'uploadMap', mapInfo => $cassiopeia	}, result => 'ok', 'upload Cassiopeia';
@@ -48,3 +48,19 @@ test { action => 'getMapInfo', mapName => 'Cassiopeia' }, 'map' => $cassiopeia, 
 
 
 test { action => "uploadMap", mapInfo => {planets => [{y => 1, neighbors => [1, 0], x => 1, size => 1}, {y => 3, neighbors => [0], x => 3, size => 2}], name => "new_map1"} }, result => "badMapInfo", "uploadMap: there's meshes in graph", 'is_deeply';
+
+my $test = {
+	name => 'test',
+	planets => [
+		{ x => 0, y => 0, size => 2, neighbors => [5, 8] },
+		{ x => 4, y => 0, size => 2, neighbors => [6, 8] },
+		{ x => 0, y => 4, size => 2, neighbors => [5, 7] },
+		{ x => 4, y => 4, size => 2, neighbors => [6, 7] },
+		{ x => 2, y => 2, size => 3, neighbors => [5, 6, 7, 8] },
+		{ x => 1, y => 2, size => 1, neighbors => [0, 2, 4] },
+		{ x => 3, y => 2, size => 1, neighbors => [1, 3, 4] },
+		{ x => 2, y => 3, size => 1, neighbors => [2, 3, 4] },
+		{ x => 2, y => 1, size => 1, neighbors => [0, 1, 4] }
+	]
+};
+test { action => 'uploadMap', mapInfo => $test }, result => 'ok', 'upload test';

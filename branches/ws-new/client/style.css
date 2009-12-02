@@ -28,7 +28,7 @@ thead {
 	font-weight: bold;
 }
 
-#games:hover {
+#games tr:hover {
 	background: #FFD700;
 	border-color: #FFD700;
 	border: solid;

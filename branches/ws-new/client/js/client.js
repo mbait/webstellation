@@ -1,8 +1,9 @@
 var WSClient = new Class.create({
 	initialize: function(obj) {
 		this.updateTime = 1000;
-		this.ui_handler = obj;
 		this.left_gameInfoUpdate = 0;
+		this.ui_handler = obj;
+		var me = this;
 	},
 	// helper methods
 	sendRequest: function(data, callback) {
@@ -34,6 +35,19 @@ var WSClient = new Class.create({
 					data.userName = this.user;
 					this.sendRequest(data);
 				},
+
+	toggleReady: function() {
+					 this.sendRequest({action: 'toggleReady', userName: this.user});
+				 },
+
+	joinGame: function(gameid) {
+				  this.sendRequest({action: 'joinGame', userName: this.user, gameName: gameid});
+			  },
+
+	leaveGame: function(gameid) {
+				   this.sendRequest({action: 'leaveGame', userName: this.user});
+			   },
+			   
 	// callbacks
 	onRegister: function(data) {
 					if(!(data.result == 'ok' || data.result == 'alreadyTaken')) {
@@ -64,7 +78,7 @@ var WSClient = new Class.create({
 	onGameInfo: function(data) {
 					this.receiveGameInfo(data);
 					if(this.canUpdateGames()) {
-						this.ui_handler.render({games: this.gameInfo});
+						this.ui_handler.render({player: this.user, playerGame: this.activeGame,  games: this.gameInfo});
 					}
 				},
 	// updates
@@ -75,6 +89,10 @@ var WSClient = new Class.create({
 					 this.update('Games');
 				 },
 
+	stopUpdate: function() {
+					this.doUpdate = false;
+				},
+
 	update: function(list) {
 					 if(!this.doUpdate) { return }
 					 var obj = this;
@@ -83,20 +101,33 @@ var WSClient = new Class.create({
 				 },
 	// gameInfo updates
 	startGameUpdate: function(cnt) {
+						 this.activeGame = null;
 						 this.left_gameInfoUpdate = cnt;
 						 this.gameInfo = {};
 					 },
+
+	stopGameUpdate: function() {
+					   this.left_gameInfoUpdate = 0;
+				   },
 
 	canUpdateGames: function() {
 						return this.left_gameInfoUpdate == 0;
 					},
 
 	receiveGameInfo: function(data) {
-						this.gameInfo[data.game.name] = {
-							name: data.game.name,
-							'status': data.game.status,
-							action: 'n/a'	  
-						};
-						this.left_gameInfoUpdate = this.left_gameInfoUpdate - 1;
+						if(!this.doUpdate) { return }
+
+						var game = data.game;
+						var me = this;
+						$A(game.players).each(function(val){if(me.user == val.name){me.activeGame = game.name}});
+						if(game.status == 'playing' && game.name == this.activeGame) {
+							this.stopGameUpdate();
+							this.stopUpdate();
+							this.sendRequest({action: 'getMapInfo', mapName: game.map}, function(data) { me.ui_handler.play(data) });
+						}
+						else {
+							this.gameInfo[data.game.name] = game;
+							this.left_gameInfoUpdate = this.left_gameInfoUpdate - 1;
+						}
 					}
 });

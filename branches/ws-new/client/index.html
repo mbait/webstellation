@@ -19,7 +19,7 @@
 					<tr><td align="center" colspan="2">Wellcome to Webstellation</td></tr>
 					<tr>
 						<td align="right"><label for="host">Server address</label></td>
-						<td><input id="host"></td>
+						<td><input id="host" value="http://localhost:8080"></td>
 					</tr>
 					<tr>
 						<td align="right"><label for="user">User name</label></td>
@@ -87,11 +87,13 @@
 		<table width="100%" border="solid">
 			<tr>
 				<td id="map"></td>
-				<td valign="top" id="score">
+				<td valign="top">
 					<table>
 						<thead>
 							<tr><td colspan="2">Score</td></tr>
 						</thead>
+						<tbody id="score">
+						</tbody>
 					</table>
 				</td>
 			</tr>

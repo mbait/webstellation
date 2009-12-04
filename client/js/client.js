@@ -47,13 +47,16 @@ var WSClient = new Class.create({
 	leaveGame: function(gameid) {
 				   this.sendRequest({action: 'leaveGame', userName: this.user});
 			   },
-			   
+
+	move: function(ind) {
+			  this.sendRequest({action: 'move', userName: this.user, planet: ind});
+		  },
 	// callbacks
 	onRegister: function(data) {
 					if(!(data.result == 'ok' || data.result == 'alreadyTaken')) {
 						return;
 					}
-					this.startUpdate();
+					this.startUpdate(['Users', 'Maps', 'Games']);
 					this.ui_handler.onRegister();
 				},
 
@@ -82,22 +85,26 @@ var WSClient = new Class.create({
 					}
 				},
 	// updates
-	startUpdate: function() {
+	startUpdate: function(list) {
 					 this.doUpdate = true;
-					 this.update('Users');
-					 this.update('Maps');
-					 this.update('Games');
+					 this.updateList = $A(list);
+					 var me = this;
+					 $A(list).each(function(val) { me.update(val) });
 				 },
 
 	stopUpdate: function() {
+					clearTimeout();
 					this.doUpdate = false;
 				},
 
 	update: function(list) {
 					 if(!this.doUpdate) { return }
+					 if(!this.updateList.member(list)) { return }
 					 var obj = this;
-					 this.sendRequest({action: 'get' + list}, function(data) {obj.onUpdateReceive(data)});
-					 setTimeout(function() {obj.update(list)}, this.updateTime);
+					 var params = {action: 'get' + list};
+					 if(list == 'GameState') { params.gameName = this.playingGame }
+					 this.sendRequest(params, function(data) {obj.onUpdateReceive(data)});
+					 if(this.doUpdate) { setTimeout(function() {obj.update(list)}, this.updateTime) }
 				 },
 	// gameInfo updates
 	startGameUpdate: function(cnt) {
@@ -123,7 +130,10 @@ var WSClient = new Class.create({
 						if(game.status == 'playing' && game.name == this.activeGame) {
 							this.stopGameUpdate();
 							this.stopUpdate();
-							this.sendRequest({action: 'getMapInfo', mapName: game.map}, function(data) { me.ui_handler.play(data) });
+							this.sendRequest({action: 'getMapInfo', mapName: game.map}, 
+									function(data) { me.ui_handler.play(game.players, data.map, function(ind) { me.move(ind) }) });
+							this.playingGame = game.name;
+							this.startUpdate(['GameState']);
 						}
 						else {
 							this.gameInfo[data.game.name] = game;

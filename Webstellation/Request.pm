@@ -215,7 +215,7 @@ sub toggleReady {
 	if($all && @{$game->{players}} > 1) {
 		$game->{status} = 'playing';
 		my $state = $self->states->{$game->{name}} = { active => 0, planets => [], score => [] };
-		push @{$state->{planets}}, { bases => 0 } for @{$self->maps->{$game->{'map'}}->{planets}};
+		push @{$state->{planets}}, { bases => 0, owner => undef } for @{$self->maps->{$game->{'map'}}->{planets}};
 		push @{$state->{score}}, { planets => 0, bases => 0, influence => 0 } for @{$game->{players}};
 	}
 	
@@ -327,7 +327,7 @@ sub getGameState {
 	my ($self, $args) = @_;
 	validate $args, { gameName => 'string' } or return { result => 'formatError' };
 	$self->games->{$args->{gameName}}->{status} eq 'playing' or return { result => 'notStarted' };
-	return { result => $RESULT_OK, state => $self->states->{$args->{gameName}} };
+	return { result => $RESULT_OK, game => $self->states->{$args->{gameName}} };
 }
 
 sub loadGame {
@@ -353,9 +353,26 @@ sub move {
 	@{$map->{planets}} > $args->{planet} or return { result => 'badPlanet' };
 
 	my $planet = $state->{planets}->[$args->{planet}];
-	return { result => $RESULT_OK } unless
-		$planet->{owner} &&
-	   	$game->{players}->[$planet->{owner}]->{name} eq $args->{userName};
+	my $player = $args->{userName};
+	return { result => 'badPlanet' } if 
+		defined $planet->{owner} && $planet->{owner} != $state->{active} || 
+		$planet->{bases} == $map->{planets}->[$args->{planet}]->{size};
+	$planet->{owner} = $state->{active};
+	++$planet->{bases};
+	$state->{active} = ($state->{active} + 1) % @{$game->{players}};
+	# calculate influence
+	# calculate state
+	for my $field (@{$state->{score}}) {
+		$field->{$_} = 0 for qw/planets bases influence/;
+	}
+	for(my $i=0; $i<@{$state->{planets}}; ++$i) {
+		my $planet = $state->{planets}->[$i];
+		if(defined $planet->{owner}) {
+			my $score = $state->{score}->[$planet->{owner}];
+			++$score->{planets};
+			$score->{bases} += $planet->{bases};
+		}
+	}
 
 	return { result => $RESULT_OK };
 }

@@ -10,7 +10,10 @@ The total number of bases that a player has on any particular planet and all its
 
 A planet is owned by that player whose influence on it is the highest.  If more than one players have maximal impacts on the planet and there is at least one base on it, the planet belongs to the owner of this base (even if his impact is not the highest).  Otherwise the planet is considered to be a neutral one.
 
-If as a result of a turn some planet passed from one player to another, all bases on it are destroyed.
+If as a result of a turn some planet passed from one player to another, all bases on it are destroyed. All rules above produce following algorithm:
+  # Player places bases on some planet.
+  # Influence is calculated for each planet. If some planet changes owner its bases will be deleted. 
+  # Repeat step 2 until there are no bases to delete.
 
 A player on his turn can concede his defeat and leave the game.  In that case all the bases built by this player are destroyed and ownership of the planets that were in his possession is recalculated using the rules mentioned above.
 

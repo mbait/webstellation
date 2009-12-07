@@ -72,6 +72,11 @@ do {
 		last if $r->{game}->{players}->[$index]->{name} eq $user;
 	}
 } until($r->{game}->{status} eq 'playing');
+print "Fetching map data ($r->{game}->{map})...";
+$r = sendRequest { action => 'getMapInfo', mapName => $r->{game}->{'map'} };
+die "Cannot fetch map data: $r->{result}($r->{message})" unless $r->{result} eq 'ok';
+my $map = $r->{'map'}->{planets};
+print "Wait self order ($index)...";
 while(1) {
 	sleep 2;
 	$r = sendRequest { action => 'getGameState', gameName => $game };
@@ -79,7 +84,9 @@ while(1) {
 	# our turn
 	if($state->{active} == $index) {
 		my $i = 0;
-		my @planets = grep { !defined $_->{owner} } map { {%{$_}, ind => $i++ } }@{$state->{planets}};
+		my @planets = 
+			grep {!$_->{bases} || $_->{owner} eq $index && $_->{bases} < $map->[$_->{ind}]->{size} } 
+			map { {%{$_}, ind => $i++ } }@{$state->{planets}};
 		unless(@planets) {
 			print "These are no planets to move. Quit now";
 			exit;

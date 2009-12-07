@@ -2,6 +2,8 @@ use strict;
 use lib 't';
 use Test::Webstellation;
 
+CHECK {
+undef $Test::Webstellation::host;
 test { action => 'clearAll' }, result => 'ok', 'clear database';
 test { action => 'register', userName => 'A' }, result => 'ok', 'register A';
 test { action => 'register', userName => 'B' }, result => 'ok', 'register B';
@@ -33,3 +35,4 @@ test { action => 'move', userName => 'A', planet => 32000 }, result => 'badPlane
 test { action => 'move', userName => 'Z', planet => 0 }, result => 'notInGame', 'unregistered user tries to move';
 test { action => 'move', userName => 'C', planet => 0 }, result => 'notInGame', 'out-of-game user tries to move';
 test { action => 'move', userName => 'B', planet => 32000 }, result => 'notYourTurn', 'B tries to move and bad planet';
+}

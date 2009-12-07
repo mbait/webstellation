@@ -12,6 +12,7 @@ var Map = new Class.create({
 		this.canvas = new Raphael("map", this.canvasWidth, this.canvasHeight);
 		this.bases = new Array();
 		this.planets = new Array();
+		this.playerColor = ['orange', 'blue', 'green', 'cyan'];
 	},
 
 	init: function(map, callback) {
@@ -26,7 +27,7 @@ var Map = new Class.create({
 		 p.node.onclick = function() { self.onPlanetClick(index) }
 		 p.node.onmouseover = function() { p.attr('stroke-width', '2') };
 		 p.node.onmouseout = function() { p.attr('stroke-width', '1') };
-		 this.planets.push({'x': x, 'y': y});
+		 this.planets.push({'x': x, 'y': y, obj: p});
 	},
 
 	addBase: function(x, y) {
@@ -90,6 +91,8 @@ var Map = new Class.create({
 		var index = 0;
 		$A(planets).each(function(state) {
 			var planet = self.planets[index];
+			var color = state.owner == null? '#A9A9A9': self.playerColor[state.owner];
+			planet.obj.attr('fill', color);
 			if(state.bases == 1) {
 				self.addBase(planet.x, planet.y);
 			}
@@ -176,7 +179,7 @@ var WSUI = new Class.create({
 				score.innerHTML = '';
 				for(var i=0; i<this.players.size(); ++i) {
 					var row = new Element('tr');
-					row.update(new Element('td', {colspan: '2', class: 'score'})).update(this.players[i].name);
+					row.update(new Element('td', {colspan: '2', class: 'score'}).update(new Element('font', {color: this.map.playerColor[i]}).update( this.players[i].name)));
 					score.insert(row);
 					row = new Element('tr');
 					row.insert(new Element('td').update('Planets:'));

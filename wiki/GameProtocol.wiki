@@ -3,7 +3,7 @@
 
 = Overview =
 
-Clients use series of requests in [http://www.json.org/ JSON] format to communicate with a game server.  Requests are sent between a client and a server using POST method of HTTP protocol, where the text of a query is stored as value of the only variable named `r`.  Each query is an object (an unordered set of name/value pairs) that contains parameters of a game operation.  The correct query has mandatory parameter `action` containing the identifier of an operation for the server to perform.  Presence or absence of other parameters depends on a particular action.
+Clients use series of requests in [http://www.json.org/ JSON] format to communicate with a game server.  Requests are sent between a client and a server using POST method of HTTP protocol, where the text of a query is stored as value of the only variable named *r*.  Each query is an object (an unordered set of name/value pairs) that contains parameters of a game operation.  The correct query has mandatory parameter `action` containing the identifier of an operation for the server to perform.  Presence or absence of other parameters depends on a particular action.
 
 The server's response on a request is also a JSON object with mandatory field `result` (containing string "`ok`", meaning successful query execution, or the identifier of an error occurred from the list [#Error_Messages below]).  Optionally, any response has field `message` containing a text message to the end user.  Again, depending on the type of an action, response object contains additional fields describing the result of an operation.
 

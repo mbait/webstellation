@@ -355,12 +355,42 @@ sub move {
 	my $planet = $state->{planets}->[$args->{planet}];
 	my $player = $args->{userName};
 	return { result => 'badPlanet' } if 
-		defined $planet->{owner} && $planet->{owner} != $state->{active} || 
+		defined $planet->{owner} && $planet->{owner} != $state->{active} && $planet->{bases} || 
 		$planet->{bases} == $map->{planets}->[$args->{planet}]->{size};
 	$planet->{owner} = $state->{active};
 	++$planet->{bases};
-	$state->{active} = ($state->{active} + 1) % @{$game->{players}};
 	# calculate influence
+	my @changed;
+	do {
+		@changed = ();
+		my $index = 0;
+		for my $p(@{$state->{planets}}) {
+			my %inf;
+		   	%inf = ( $p->{owner} => $p->{bases} ) if defined $p->{owner} && $p->{bases};
+			for(map { $state->{planets}->[$_] } @{$map->{planets}->[$index]->{neighbors}}) {
+				 $inf{$_->{owner}} += $_->{bases} if defined $_->{owner} && $_->{bases};
+			}
+			my @max = reverse sort { $inf{$a} <=> $inf{$b} } keys %inf; 
+			@max = grep { $inf{$_} > $inf{$p->{owner}} } @max if defined $p->{owner} && $p->{bases};
+			#print Dumper { %inf };
+			#print Dumper [ @max ];
+			if(@max) {
+				my ($new, $new2) = @max;
+				$new = undef if defined $new2 && $inf{$new} == $inf{$new2};
+				print "DEBUG, planet: $index\n";
+				print Dumper \$new;
+				push @changed, { ind => $index, owner => $new } if $new ne $p->{owner};
+				print Dumper \@changed;
+			}
+			++$index;
+		}
+		for(@changed) {
+			my $p = $state->{planets}->[$_->{ind}];
+			$p->{owner} = $_->{owner};
+			$p->{bases} = 0;
+		}
+	}while(@changed);
+
 	# calculate state
 	for my $field (@{$state->{score}}) {
 		$field->{$_} = 0 for qw/planets bases influence/;
@@ -373,6 +403,7 @@ sub move {
 			$score->{bases} += $planet->{bases};
 		}
 	}
+	$state->{active} = ($state->{active} + 1) % @{$game->{players}};
 
 	return { result => $RESULT_OK };
 }

@@ -27,7 +27,7 @@ else {
 	warn "Failed to read server.conf: $!\nUsing defaults\n";
 }
 
-my $g = Webstellation::Request->new($conf{'db'});
+my $g = new Webstellation::Request dbclass => 'Webstellation::DBI::BerkeleyDB', env => $conf{env};
 print "Starting server...\n";
 my $d = HTTP::Daemon->new(LocalPort => $conf{'port'}, Reuse => 1) or die $!;
 print "Listening on port $conf{'port'}\n";

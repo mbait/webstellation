@@ -35,7 +35,7 @@ sub wrap {
 		$result = $res->content;
 	}
 	else {
-		my $r = Webstellation::Request->new($fname);
+		my $r = new Webstellation::Request dbclass => 'Webstellation::DBI::BerkeleyDB', env => $fname;
 		$result = $r->dispatch($json);
 	}
 	return $result;

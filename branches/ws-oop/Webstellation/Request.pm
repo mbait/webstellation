@@ -5,37 +5,33 @@ use warnings;
 
 use JSON;
 use Data::Dumper;
-
-use Webstellation::DB;
-use Webstellation::Request::ClearAll;
-use Webstellation::Request::Register;
-use Webstellation::Request::GetUsers;
-use Webstellation::Request::Logout;
-use Webstellation::Request::JoinGame;
-use Webstellation::Request::GetMaps;
+use File::Path;
 
 sub new {
 	my $inv = shift;
 	my $class = ref $inv || $inv;
-	my $self = { dbname => shift };
+	my %opt = @_;
+	die "Cannot find $opt{dbclass} package $@" unless eval "require $opt{dbclass}";
+	my $self;
+	{
+		no strict 'refs';
+		$self = { dbi => "$opt{dbclass}"->new($opt{env}) };
+	}
 	return bless $self, $class;
 }
 
 sub process {
 	my ($self, $data) = @_;
-	my $action = ucfirst $data->{action} || return { 
+	my $action = $data->{action} || return { 
 		result => 'formatError', 
 		message => 'Action is not defined' 
 	};
-	my $obj;
+	my $res;
 	eval {
 		no strict 'refs';
-		$obj =  "Webstellation::Request::$action"->new($data);
-	} ||  return { result => 'formatError', message => "$@" };
-	unless($obj->can('run')) { 
-		return { result => 'formatError', message => "Action '$action' is not runnable" }
-	};
-	my $res = $obj->run(Webstellation::DB->new($self->{dbname}));
+		eval "require Webstellation::Query::$action";
+		$res =  "Webstellation::Query::$action"->run($self->{dbi}, $data);
+	} || return { result => 'formatError', message => 'Action is not registered' };
 	return $res;
 }
 

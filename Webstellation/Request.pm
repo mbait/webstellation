@@ -35,7 +35,7 @@ sub process {
 	})
 	{
 		print "$@\n";
-		return { result => 'aformatError', message => 'Action is not registered' };
+		return { result => 'formatError', message => 'Action is not registered' };
 	}
 	return $res;
 }

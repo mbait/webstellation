@@ -39,4 +39,9 @@ sub keys {
 	return [ sort { $a cmp $b } @{$self->{dbi}->keys($self->{dbname})} ];
 }
 
+sub clear_db {
+	my $self = shift;
+	$self->{dbi}->eraise($self->{dbname});
+}
+
 1;

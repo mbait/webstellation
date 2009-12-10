@@ -8,8 +8,10 @@ use BerkeleyDB;
 sub new {
 	my $inf = shift;
 	my $class = ref $inf || $inf;
+	my $home = shift;
+	print $home;
 	my $env = new BerkeleyDB::Env
-			-Home		=>	shift || die "database root must be specified\n",
+			-Home		=>	$home || die "database root must be specified\n",
 			-ErrFile	=>	*STDERR,
 			-Flags		=>	DB_CREATE or DB_INIT_CDB
 		or die "cannot open enviroment: $BerkeleyDB::Error\n";
@@ -32,9 +34,11 @@ sub dbclose {
 	untie %{$self->{dbhash}};
 }
 
-sub clear {
-	my $self = shift;
-	`rm -rf db/*`;
+sub eraise {
+	my ($self, $dbname) = @_;
+	my $hash = $self->dbopen($dbname);
+	%{$hash} = ();
+	$self->dbclose;
 }
 
 sub hash {

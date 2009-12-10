@@ -2,17 +2,38 @@ package Webstellation::Struct::Base;
 use strict;
 use warnings;
 use Storable	qw/thaw freeze/;
+use Data::Dumper;
 
 sub insert {
 	my ($self, $key) = @_;
 	my $t = $self->{dbi}->hash($self->{dbname});
-	return { result => $self->{insert_error} || die 'Value exists' } if
-		exists $t->{$key};
-	return { result => 'ok' };
+	if(exists $t->{$key}) {
+		$self->{error} = $self->{insert_error};
+		return;
+	}
+	return 1;
+}
+
+sub load {
+	my ($self, $key) = @_;
+	my $t = $self->{dbi}->hash($self->{dbname});
+	unless(exists $t->{$key}) {
+		$self->{error} = $self->{load_error};
+		return;
+	}
+	$self->{data} = thaw $t->{$key};
+	return 1;
+}
+
+sub delete {
+	my $self = shift;
+	my $key = $self->{data}->{$self->{keyfield}};
+	$self->{dbi}->delete($self->{dbname}, $key);
 }
 
 sub init {
 	my $self = shift;
+	$self->{data} = {};
 	{
 		no strict 'refs';
 		no warnings;
@@ -20,8 +41,8 @@ sub init {
 			my $slot = $self->{pkgname}."::$field";
 			*$slot = sub {
 				my $self = shift;
-				if(@_) { return $self->{$field} = shift }
-				else { return $self->{$field } }
+				if(@_) { return ($self->{data}->{$field} = shift) }
+				else { return $self->{data}->{$field} }
 			}
 		}
 	}
@@ -29,9 +50,8 @@ sub init {
 
 sub commit {
 	my $self = shift;
-	my %hash = map { $_ => $self->{$_} } keys %{$self->{fields}};
-	my $key = $self->{$self->{keyfield}};
-	$self->{dbi}->store($self->{dbname}, $key, freeze \%hash);
+	my $key = $self->{data}->{$self->{keyfield}};
+	$self->{dbi}->store($self->{dbname}, $key, freeze $self->{data});
 }
 
 sub keys {
@@ -42,6 +62,12 @@ sub keys {
 sub clear_db {
 	my $self = shift;
 	$self->{dbi}->eraise($self->{dbname});
+}
+
+
+sub error {
+	my $self = shift;
+	return $self->{error} || 'no error';
 }
 
 1;

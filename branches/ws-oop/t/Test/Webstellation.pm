@@ -3,7 +3,7 @@ package Test::Webstellation;
 use warnings;
 use strict;
 use JSON::XS;
-use File::Temp 'tempfile';
+use File::Temp 'tempdir';
 use Webstellation::Request;
 use LWP::UserAgent;
 use HTTP::Request::Common;
@@ -15,7 +15,7 @@ require Exporter;
 our @ISA = qw/Exporter/;
 our @EXPORT = qw/test/;
 
-my ($fh, $fname) = tempfile('tmpXXXX', DIR => '/tmp');
+my $tmpdir = tempdir('tmpXXXX', TMPDIR => 1);
 our $host;
 #our $host = 'http://watcher.mine.nu/constellation/';
 #our $host = 'http://localhost:8080';
@@ -35,7 +35,7 @@ sub wrap {
 		$result = $res->content;
 	}
 	else {
-		my $r = new Webstellation::Request dbclass => 'Webstellation::DBI::BerkeleyDB', env => $fname;
+		my $r = new Webstellation::Request dbclass => 'Webstellation::DBI::BerkeleyDB', env => $tmpdir;
 		$result = $r->dispatch($json);
 	}
 	return $result;

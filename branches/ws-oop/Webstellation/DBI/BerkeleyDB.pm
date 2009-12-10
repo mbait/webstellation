@@ -6,39 +6,45 @@ use warnings;
 use BerkeleyDB;
 
 sub new {
-	my $inf = shift;
-	my $class = ref $inf || $inf;
-	my $home = shift;
-	print $home;
+	my ($inv, $home) = @_;
+	my $class = ref $inv || $inv;
+	#mkdir $home || die "cannot create enviroment directory" unless -d $home;
 	my $env = new BerkeleyDB::Env
-			-Home		=>	$home || die "database root must be specified\n",
-			-ErrFile	=>	*STDERR,
-			-Flags		=>	DB_CREATE or DB_INIT_CDB
+			-Home		=>	$home,
+			-Flags		=>	DB_CREATE | DB_INIT_CDB | DB_INIT_MPOOL
 		or die "cannot open enviroment: $BerkeleyDB::Error\n";
+	my %hash;
+	tie %hash, 'BerkeleyDB::Hash',
+			-Filename	=>	"/tmp/test",
+			-Env		=>	$env,
+			-Flags		=>	DB_CREATE
+		or die "DEBUG: $BerkeleyDB::Error\n";
 	return bless { env => $env }, $class;
 }
 
 sub dbopen {
 	my ($self, $dbname) = @_;
 	$self->{dbhash} = {};
-	tie %{$self->{dbhash}}, 'BerkeleyDB::Hash',
-			-Filename	=>	"db/$dbname.db",
+	$self->{db} = tie %{$self->{dbhash}}, 'BerkeleyDB::Hash',
+			-Filename	=>	"$dbname.db",
 			-Env		=>	$self->{env},
 			-Flags		=>	DB_CREATE
-		or die "cannot open database: $! $BerkeleyDB::Error\n";
+		or die "cannot open database: $BerkeleyDB::Error\n";
 	return $self->{dbhash};
 }
 
 sub dbclose {
 	my $self = shift;
+	delete $self->{db};
 	untie %{$self->{dbhash}};
 }
 
 sub eraise {
 	my ($self, $dbname) = @_;
-	my $hash = $self->dbopen($dbname);
-	%{$hash} = ();
-	$self->dbclose;
+	$self->dbopen($dbname);
+	my $cnt;
+	BerkeleyDB::Common::truncate($self->{db}, \$cnt);
+	$self->dbclose();
 }
 
 sub hash {
@@ -56,9 +62,16 @@ sub keys {
 }
 
 sub store {
+	my ($self, $dbname, $key, $data) = @_;
+	my $hash = $self->dbopen($dbname);
+	$hash->{$key} = $data;
+	$self->dbclose;
+}
+
+sub delete {
 	my ($self, $dbname, $key) = @_;
 	my $hash = $self->dbopen($dbname);
-	$hash->{$key} = shift;
+	delete $hash->{$key};
 	$self->dbclose;
 }
 

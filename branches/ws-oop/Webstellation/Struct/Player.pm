@@ -13,7 +13,7 @@ sub new {
 			fields			=>	{ name => '$', game => '$' },
 			pkgname			=>	__PACKAGE__,
 			insert_error	=>	'alreadyTaken',
-			load_eror		=>	'unknownUser',
+			load_error		=>	'unknownUser',
 		};
 	bless $self, $class;
 	$self->init;

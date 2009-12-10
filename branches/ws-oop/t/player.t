@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
+use lib 't';
 use Test::Webstellation;
 
 test { action => 'clearAll' }, result => 'ok', 'clear database';

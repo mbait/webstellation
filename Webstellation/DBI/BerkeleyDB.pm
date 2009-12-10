@@ -16,10 +16,46 @@ sub new {
 	return bless { env => $env }, $class;
 }
 
+sub dbopen {
+	my ($self, $dbname) = @_;
+	$self->{dbhash} = {};
+	tie %{$self->{dbhash}}, 'BerkeleyDB::Hash',
+			-Filename	=>	"db/$dbname.db",
+			-Env		=>	$self->{env},
+			-Flags		=>	DB_CREATE
+		or die "cannot open database: $! $BerkeleyDB::Error\n";
+	return $self->{dbhash};
+}
+
+sub dbclose {
+	my $self = shift;
+	untie %{$self->{dbhash}};
+}
+
 sub clear {
 	my $self = shift;
-	$self->{cleared} = {};
-	$self->{clear} = 1;
+	`rm -rf db/*`;
+}
+
+sub hash {
+	my ($self, $dbname) = @_;
+	my %hash = %{$self->dbopen($dbname)};
+	$self->dbclose;
+	return \%hash;
+}
+
+sub keys {
+	my ($self, $dbname) = @_;
+	my @keys = keys %{$self->dbopen($dbname)};	
+	$self->dbclose;
+	return \@keys;
+}
+
+sub store {
+	my ($self, $dbname, $key) = @_;
+	my $hash = $self->dbopen($dbname);
+	$hash->{$key} = shift;
+	$self->dbclose;
 }
 
 1;

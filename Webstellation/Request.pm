@@ -27,11 +27,16 @@ sub process {
 		message => 'Action is not defined' 
 	};
 	my $res;
+	unless(
 	eval {
 		no strict 'refs';
 		eval "require Webstellation::Query::$action";
 		$res =  "Webstellation::Query::$action"->run($self->{dbi}, $data);
-	} || return { result => 'formatError', message => 'Action is not registered' };
+	})
+	{
+		print "$@\n";
+		return { result => 'aformatError', message => 'Action is not registered' };
+	}
 	return $res;
 }
 

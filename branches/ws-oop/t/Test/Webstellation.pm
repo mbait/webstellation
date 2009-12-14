@@ -16,7 +16,7 @@ our @ISA = qw/Exporter/;
 our @EXPORT = qw/test/;
 
 my $tmpdir = tempdir('tmpXXXX', TMPDIR => 1);
-our $host;
+#our $host;
 #our $host = 'http://watcher.mine.nu/constellation/';
 #our $host = 'http://localhost:8080';
 
@@ -24,10 +24,10 @@ sub wrap {
 	my $result;
 	my $json = shift;
 	$json = encode_json $json if ref($json);
-	if($host) {
+	if(exists $ENV{TEST_REMOTE_HOST}) {
 		#my ($addr, $port) = split /:/, $host;
 		my $ua = LWP::UserAgent->new(agent => 'Webstellation test system');
-		my $res = $ua->request(POST $host, [ r => $json ]);
+		my $res = $ua->request(POST $ENV{TEST_REMOTE_HOST}, [ r => $json ]);
 		#skip $res->content unless $res->is_success;
 		my $content = $res->content;
 		chomp $content;

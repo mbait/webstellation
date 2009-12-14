@@ -8,17 +8,10 @@ use BerkeleyDB;
 sub new {
 	my ($inv, $home) = @_;
 	my $class = ref $inv || $inv;
-	#mkdir $home || die "cannot create enviroment directory" unless -d $home;
 	my $env = new BerkeleyDB::Env
 			-Home		=>	$home,
 			-Flags		=>	DB_CREATE | DB_INIT_CDB | DB_INIT_MPOOL
 		or die "cannot open enviroment: $BerkeleyDB::Error\n";
-	my %hash;
-	tie %hash, 'BerkeleyDB::Hash',
-			-Filename	=>	"/tmp/test",
-			-Env		=>	$env,
-			-Flags		=>	DB_CREATE
-		or die "DEBUG: $BerkeleyDB::Error\n";
 	return bless { env => $env }, $class;
 }
 
@@ -64,7 +57,10 @@ sub keys {
 sub store {
 	my ($self, $dbname, $key, $data) = @_;
 	my $hash = $self->dbopen($dbname);
+	my $lk = $self->{db}->cds_lock();
 	$hash->{$key} = $data;
+	$lk->cds_unlock;
+	undef $lk;
 	$self->dbclose;
 }
 

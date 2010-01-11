@@ -169,3 +169,8 @@ div.ingame {
 	text-align: left;
 	word-spacing: 5px;
 }
+
+#error {
+	font-weight: bold;
+	background: red;
+}

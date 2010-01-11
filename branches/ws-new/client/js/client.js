@@ -7,15 +7,35 @@ var WSClient = new Class.create({
 	},
 	// helper methods
 	sendRequest: function(data, callback) {
-		new Ajax.Request(this.host, {
-			method: 'post',
-			parameters: {r: $H(data).toJSON()},
-			onSuccess: function(t) {
-				if(callback != null) {
-					callback(t.responseText.evalJSON());
+		this.ui_handler.hideError();
+		var self = this;
+		try {
+			new Ajax.Request(this.host, {
+				method: 'post',
+				parameters: {r: $H(data).toJSON()},
+				onSuccess: function(t) {
+					if(callback != null) {
+						callback(t.responseText.evalJSON());
+					}
+				},
+				onFailure: function(t) {
+					if(t.status == 400) {
+						if(callback != null) {
+							callback(t.responseText.evalJSON());
+						}
+					}
+					else {
+						self.ui_handler.showError(t.statusText);
+					}
+				},
+				onException: function(t) {
+					alert(t);
+					//self.ui_handler.showError(t.statusText);
 				}
-			}
-		});
+			});
+		} catch(err) {
+			self.ui_handler.showError(err);
+		}
 	},
 	// main actions
 	connect: function(data) {

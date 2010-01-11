@@ -127,6 +127,16 @@ var WSUI = new Class.create({
 			$('auth').show();
 		},
 
+		showError: function(text) {
+			var err = $('error');
+			err.innerText = text;
+			err.show();
+		},
+
+		hideError: function() {
+			$('error').hide();
+		},
+
 		render: function(data) {
 			if(data.users != null) {
 				var obj = $('userlist');

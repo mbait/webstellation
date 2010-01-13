@@ -45,6 +45,61 @@ sub waitEvent {
 	print chr(8), " \n";
 }
 
+sub calcMoveProfit {
+	my ( $map, $old_state, $idx ) = @_;
+	my $state;
+	eval Data::Dumper->Dump( [ $old_state ], ['state'] );
+	$state->{planets}->[$idx]->{owner} = $state->{active};
+	++$state->{planets}->[$idx]->{bases};
+	my @changed;
+	do {
+		@changed = ();
+		my $index = 0;
+		for my $p(@{$state->{planets}}) {
+			my %inf;
+		   	%inf = ( $p->{owner} => $p->{bases} ) if defined $p->{owner} && $p->{bases};
+			for(map { $state->{planets}->[$_] } @{$map->{planets}->[$index]->{neighbors}}) {
+				 $inf{$_->{owner}} += $_->{bases} if defined $_->{owner} && $_->{bases};
+			}
+			my @max = reverse sort { $inf{$a} <=> $inf{$b} } keys %inf; 
+			@max = grep { $inf{$_} > $inf{$p->{owner}} } @max if defined $p->{owner} && $p->{bases};
+			#print Dumper { %inf };
+			#print Dumper [ @max ];
+			if(@max) {
+				my ($new, $new2) = @max;
+				$new = undef if defined $new2 && $inf{$new} == $inf{$new2};
+				#print "DEBUG, planet: $index\n";
+				#print Dumper \$new;
+				push @changed, { ind => $index, owner => $new } if $new ne $p->{owner};
+				#print Dumper \@changed;
+			}
+			++$index;
+		}
+		for(@changed) {
+			my $p = $state->{planets}->[$_->{ind}];
+			$p->{owner} = $_->{owner};
+			$p->{bases} = 0;
+		}
+	}while(@changed);
+	print Dumper $state;
+	
+	my $score = 0;
+	for my $p ( @{ $state->{planets} } ) {
+		$score += $p->{bases} if $p->{owner} && $p->{owner} == $state->{active};
+	}
+	return $score - $old_state->{score}->[ $old_state->{active} ]->{bases};
+}
+
+sub makeMove {
+	my( $map, $state, @planets ) = @_;
+	my @idx = sort { $a->[1] <=> $b->[1] } map { [ $_, calcMoveProfit( $map, $state, $_ ) ] } @planets;
+	@idx = 
+		sort { $map->{planets}->[ $b->[0] ]->{size} <=> $map->{planets}->[ $a->[0] ]->{size} } 
+		grep { $_->[1] == $idx[0]->[1] } @idx;
+	print Dumper \@idx;
+	return $idx[0]->[0];
+}
+
 BEGIN {
 
 my %cfg = readConfig $ARGV[1];
@@ -73,14 +128,32 @@ $info = sendRequest( { action => 'getGameInfo', gameName => $cfg{game} } )->{gam
 my $idx = 0;
 my $pos = { map { $_->{name} => $idx++ } @{ $info->{players} } }->{$user};
 print "Playing at position $pos\n";
+print "Map name is '$info->{map}'\n";
 print "=======================\n";
 
-while( 1 ) {
+my $map = sendRequest({ action => 'getMapInfo', mapName => $info->{map} })->{'map'};
+my $state;
+MAIN: while( 1 ) {
 	while( 1 ) {
-		last if sendRequest({ action => 'getGameState', gameName => $cfg{game} })->{game}->{active} == $pos;
+		last MAIN if sendRequest({ action => 'getGameInfo', gameName => $cfg{game} })->{game}->{status} ne 'playing';
+		$state = sendRequest({ action => 'getGameState', gameName => $cfg{game} })->{game};
+		last if $state->{active} == $pos;
 		sleep $cfg{request_freq};
 	}
-	last;
+	$idx = 0;
+	my @planets = map { $_->{idx} = $idx++; $_ } @{ $state->{planets} };
+	@planets = map { $_->{idx} } 
+		grep { !$_->{bases} || $_->{owner} == $pos && $_->{bases} < $map->{planets}->[ $_->{idx} ]->{size} } @planets;
+	print Dumper \@planets;
+	unless( @planets ) {
+		# Yoda notation is not an error
+		print "To move on there are no planets. Good game was it\n";
+		last MAIN;
+	}
+	$idx = makeMove( $map, $state, @planets );
+	print "Move on planet $idx\n";
+	sendRequest({ action => 'move', userName => $user, planet => $idx }, 'ok' );
 }
+sendRequest({ action => 'logout', userName => $user });
 
 }

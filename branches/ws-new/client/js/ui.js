@@ -1,7 +1,8 @@
 var Map = new Class.create({
-	initialize: function() {
-		this.canvasWidth = 400;
-		this.canvasHeight = 300;
+	initialize: function(tag) {
+		if(tag == null) { tag = "map" } 
+		this.canvasWidth = 600;
+		this.canvasHeight = 400;
 		this.planetRadius = 7;
 		this.planetMaxRadius = this.planetRadius*3;
 		this.planetMaxRadius2 = this.planetMaxRadius*2;
@@ -9,7 +10,7 @@ var Map = new Class.create({
 		this.baseRadius2 = this.baseRadius * 2;
 		this.clientWidth = this.canvasWidth - this.planetMaxRadius2;
 		this.clientHeight = this.canvasHeight - this.planetMaxRadius2;
-		this.canvas = new Raphael("map", this.canvasWidth, this.canvasHeight);
+		this.canvas = new Raphael(tag, this.canvasWidth, this.canvasHeight);
 		this.bases = new Array();
 		this.planets = new Array();
 		this.playerColor = ['orange', 'blue', 'green', 'cyan'];
@@ -20,8 +21,8 @@ var Map = new Class.create({
 		this.onPlanetClick = callback;
 	},
 
-	addPlanet: function(x, y, r, index) {
-		 var p =  this.canvas.circle(x, y, r*this.planetRadius);
+	addPlanet: function(x, y, s, index) {
+		 var p =  this.canvas.circle(x, y, s*this.planetRadius);
 		 p.attr('fill', '#A9A9A9');
 		 var self = this;
 		 p.node.onclick = function() { self.onPlanetClick(index) }
@@ -65,10 +66,10 @@ var Map = new Class.create({
 					var t = new Template('M#{x0} #{y0}L#{x1} #{y1}');
 					try {
 					canvas.path(t.evaluate({
-					x0: planet.x*mx + dx,
-					y0: planet.y*my + dy,
-					x1: planets[nb].x*mx + dx,
-					y1: planets[nb].y*my + dy
+					x0: (planet.x - minx )*mx + dx,
+					y0: (planet.y - miny )*my + dy,
+					x1: (planets[nb].x - minx )*mx + dx,
+					y1: (planets[nb].y - miny )*my + dy
 					}));
 					spares[planet_ind][nb] = 1; } catch(err) { alert(err) }
 				}
@@ -77,7 +78,7 @@ var Map = new Class.create({
 		var index = 0;
 		$A(this.map.planets).each(function(planet) {
 			 //var c = canvas.circle(planet.x*mx + dx , planet.y*my + dy , planet.size*self.planetRadius);
-			 self.addPlanet(planet.x*mx + dx, planet.y*my + dy, planet.size, index++);
+			 self.addPlanet((planet.x-minx)*mx + dx, (planet.y-miny)*my + dy, planet.size, index++);
 		});
 	},
 
@@ -112,8 +113,29 @@ var Map = new Class.create({
 
 var WSUI = new Class.create({
 		lookAndFeel: function() {
+			$$('.round').each(function(val) {
+				var tag = val;
+				$(['frame_container',
+				   	'frame3_fat',
+				   	'frame3_slim',
+				   	'frame2_fat',
+				   	'frame2_slim',
+				   	'frame1_fat',
+				   	'frame1_slim'
+				]).each(function(classname) {
+					tag = tag.wrap(new Element('div', {class: classname}));
+				});
+			});
 			this.map = new Map();
 		},
+
+		showError: function(text) {
+			$('errortext').update(text);
+		},
+
+		hideError: function(text) {
+			$('errortext').update('');
+	    },
 
 		toggle: function(id) {
 			$(id).toggle();

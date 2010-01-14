@@ -370,6 +370,10 @@ sub move {
 			for(map { $state->{planets}->[$_] } @{$map->{planets}->[$index]->{neighbors}}) {
 				 $inf{$_->{owner}} += $_->{bases} if defined $_->{owner} && $_->{bases};
 			}
+			unless( %inf ) {
+				$p->{owner} = undef;
+				$p->{bases} = 0;
+			}
 			my @max = reverse sort { $inf{$a} <=> $inf{$b} } keys %inf; 
 			@max = grep { $inf{$_} > $inf{$p->{owner}} } @max if defined $p->{owner} && $p->{bases};
 			#print Dumper { %inf };

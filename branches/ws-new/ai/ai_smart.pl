@@ -83,14 +83,15 @@ sub calcMoveProfit {
 	
 	my $score = 0;
 	for my $p ( @{ $state->{planets} } ) {
-		$score += $p->{bases} if $p->{owner} && $p->{owner} == $state->{active};
+		++$score if $p->{owner} && $p->{owner} == $state->{active};
 	}
-	return $score - $old_state->{score}->[ $old_state->{active} ]->{bases};
+	return $score - $old_state->{score}->[ $old_state->{active} ]->{planets};
 }
 
 sub makeMove {
 	my( $map, $state, @planets ) = @_;
-	my @idx = sort { $a->[1] <=> $b->[1] } map { [ $_, calcMoveProfit( $map, $state, $_ ) ] } @planets;
+	my @idx = sort { $b->[1] <=> $a->[1] } map { [ $_, calcMoveProfit( $map, $state, $_ ) ] } @planets;
+	print Dumper \@idx;
 	@idx = 
 		sort { $map->{planets}->[ $b->[0] ]->{size} <=> $map->{planets}->[ $a->[0] ]->{size} } 
 		grep { $_->[1] == $idx[0]->[1] } @idx;

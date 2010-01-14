@@ -187,9 +187,23 @@ var WSUI = new Class.create({
 				this.map.update(game.planets); } catch(err) { alert(err) }
 				var score = $('score');
 				score.innerHTML = '';
+				var p_idx;
+				for(var i=0; i<this.players.size(); ++i ) {
+					if( this.players[i].name == this.player ) {
+						p_idx = i;
+						break;
+					}
+				}
 				for(var i=0; i<this.players.size(); ++i) {
 					var row = new Element('tr');
-					row.update(new Element('td', {colspan: '2', class: 'score'}).update(new Element('font', {color: this.map.playerColor[i]}).update( this.players[i].name)));
+					var style = {color: this.map.playerColor[i]};
+					var nick = this.players[i].name;
+					if(i == p_idx) {
+						style.style = 'text-decoration: underline';
+						nick = "You are: " + nick;
+					}
+					var elem = new Element('font', style );
+					row.update(new Element('td', {colspan: '2', class: 'score'}).update(elem.update( nick )));
 					score.insert(row);
 					row = new Element('tr');
 					row.insert(new Element('td').update('Planets:'));
@@ -224,7 +238,8 @@ var WSUI = new Class.create({
 						   this.activeGame = game.name;
 					   },
 
-		play: function(players, map, callback) {
+		play: function( player, players, map, callback) {
+				  this.player = player;
 				  this.players = players;
 				  this.map.init(map, callback);
 				  this.map.draw();

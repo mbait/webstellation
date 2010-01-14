@@ -150,8 +150,9 @@ var WSClient = new Class.create({
 						if(game.status == 'playing' && game.name == this.activeGame) {
 							this.stopGameUpdate();
 							this.stopUpdate();
+							var player = this.user;
 							this.sendRequest({action: 'getMapInfo', mapName: game.map}, 
-									function(data) { me.ui_handler.play(game.players, data.map, function(ind) { me.move(ind) }) });
+									function(data) { me.ui_handler.play(player, game.players, data.map, function(ind) { me.move(ind) }) });
 							this.playingGame = game.name;
 							this.startUpdate(['GameState']);
 						}

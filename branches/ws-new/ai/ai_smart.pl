@@ -61,17 +61,16 @@ sub calcMoveProfit {
 			for(map { $state->{planets}->[$_] } @{$map->{planets}->[$index]->{neighbors}}) {
 				 $inf{$_->{owner}} += $_->{bases} if defined $_->{owner} && $_->{bases};
 			}
+			unless( %inf ) {
+				$p->{owner} = undef;
+				$p->{bases} = 0;
+			}
 			my @max = reverse sort { $inf{$a} <=> $inf{$b} } keys %inf; 
 			@max = grep { $inf{$_} > $inf{$p->{owner}} } @max if defined $p->{owner} && $p->{bases};
-			#print Dumper { %inf };
-			#print Dumper [ @max ];
 			if(@max) {
 				my ($new, $new2) = @max;
 				$new = undef if defined $new2 && $inf{$new} == $inf{$new2};
-				#print "DEBUG, planet: $index\n";
-				#print Dumper \$new;
 				push @changed, { ind => $index, owner => $new } if $new ne $p->{owner};
-				#print Dumper \@changed;
 			}
 			++$index;
 		}
@@ -81,7 +80,6 @@ sub calcMoveProfit {
 			$p->{bases} = 0;
 		}
 	}while(@changed);
-	print Dumper $state;
 	
 	my $score = 0;
 	for my $p ( @{ $state->{planets} } ) {
@@ -96,7 +94,6 @@ sub makeMove {
 	@idx = 
 		sort { $map->{planets}->[ $b->[0] ]->{size} <=> $map->{planets}->[ $a->[0] ]->{size} } 
 		grep { $_->[1] == $idx[0]->[1] } @idx;
-	print Dumper \@idx;
 	return $idx[0]->[0];
 }
 
@@ -108,7 +105,7 @@ $user = $cfg{user};
 my $info;
 sendRequest({ action => 'register', userName => $cfg{user} }, $cfg{force_enter} ? '' : 'ok');
 $| = 1;
-print "Try enter game $cfg{game}...\n";
+print "Try enter game '$cfg{game}'...\n";
 while( 1 ) {
 	my $games = sendRequest( { action => 'getGames' } )->{games};
 	my ( $game ) = grep { $_ eq $cfg{game} } @{ $games };
@@ -144,7 +141,6 @@ MAIN: while( 1 ) {
 	my @planets = map { $_->{idx} = $idx++; $_ } @{ $state->{planets} };
 	@planets = map { $_->{idx} } 
 		grep { !$_->{bases} || $_->{owner} == $pos && $_->{bases} < $map->{planets}->[ $_->{idx} ]->{size} } @planets;
-	print Dumper \@planets;
 	unless( @planets ) {
 		# Yoda notation is not an error
 		print "To move on there are no planets. Good game was it\n";

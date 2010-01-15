@@ -7,6 +7,8 @@ use LWP::UserAgent;
 use HTTP::Request::Common;
 use JSON;
 use Data::Dumper;
+use Storable 'dclone';
+use Clone 'clone';
 
 my ($host, $user) = @ARGV;
 
@@ -47,8 +49,8 @@ sub waitEvent {
 
 sub calcMoveProfit {
 	my ( $map, $old_state, $idx ) = @_;
-	my $state;
-	eval Data::Dumper->Dump( [ $old_state ], ['state'] );
+	#eval Data::Dumper->Dump( [ $old_state ], ['state'] );
+	my $state = dclone $old_state;
 	$state->{planets}->[$idx]->{owner} = $state->{active};
 	++$state->{planets}->[$idx]->{bases};
 	my @changed;
@@ -83,7 +85,7 @@ sub calcMoveProfit {
 	
 	my $score = 0;
 	for my $p ( @{ $state->{planets} } ) {
-		++$score if $p->{owner} && $p->{owner} == $state->{active};
+		$score += $p->{bases} + 1 if $p->{owner} && $p->{owner} == $state->{active};
 	}
 	return $score - $old_state->{score}->[ $old_state->{active} ]->{planets};
 }
@@ -91,14 +93,11 @@ sub calcMoveProfit {
 sub makeMove {
 	my( $map, $state, @planets ) = @_;
 	my @idx = sort { $b->[1] <=> $a->[1] } map { [ $_, calcMoveProfit( $map, $state, $_ ) ] } @planets;
-	print Dumper \@idx;
 	@idx = 
 		sort { $map->{planets}->[ $b->[0] ]->{size} <=> $map->{planets}->[ $a->[0] ]->{size} } 
 		grep { $_->[1] == $idx[0]->[1] } @idx;
 	return $idx[0]->[0];
 }
-
-BEGIN {
 
 my %cfg = readConfig $ARGV[1];
 $host = $cfg{host};
@@ -152,5 +151,3 @@ MAIN: while( 1 ) {
 	sendRequest({ action => 'move', userName => $user, planet => $idx }, 'ok' );
 }
 sendRequest({ action => 'logout', userName => $user });
-
-}

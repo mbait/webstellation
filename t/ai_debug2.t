@@ -187,6 +187,6 @@ my $map = {
 test { action => 'clearAll' }, result => 'ok', 'clear DB';
 test { action => 'uploadMap', mapInfo => $map }, result => 'ok', 'upload test';
 test { action => 'register', userName => 'player1' }, result => 'ok', 'register player1';
-test { action => 'createGame', userName => 'player1', gameName => 'game1', mapName => 'test', maxPlayers => 2 }, result => 'ok';
+test { action => 'createGame', userName => 'player1', gameName => 'game1', mapName => 'test', maxPlayers => 3 }, result => 'ok';
 test { action => 'toggleReady', userName => 'player1' }, result => 'ok';
 

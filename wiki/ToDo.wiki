@@ -1,0 +1,12 @@
+#labels Featured,Phase-Design
+= Server =
+
+  * Fast HTTP-server with HTTPS support
+  * Password authentication
+  * Data compression
+
+= Client =
+
+  * User interface graphics
+  * Gameplay graphics
+  * Replace Raphaël with jQuery SVG

@@ -1,4 +1,5 @@
 #summary General rules of Constellation game
+#labels Phase-Implementation
 
 The game involves two or more players competing for control over a star system.
 

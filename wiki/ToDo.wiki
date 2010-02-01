@@ -10,3 +10,7 @@
   * User interface graphics
   * Gameplay graphics
   * Replace Raphaël with jQuery SVG
+
+= Other =
+
+   * Project logo

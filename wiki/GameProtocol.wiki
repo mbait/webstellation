@@ -1,4 +1,5 @@
 #summary Format of client/server interaction protocol
+#labels Phase-Implementation
 <wiki:toc max_depth="2" />
 
 = Overview =

@@ -1,9 +1,9 @@
 #labels Featured,Phase-Design
 ==Server==
 
-  * Fast HTTP-server with HTTPS support
-  * Password authentication
-  * Data compression
+  * Setup fast HTTP-server with HTTPS support
+  * Add password authentication
+  * Add data compression
 
 ==Client==
 
@@ -13,4 +13,5 @@
 
 ==Other==
 
-   * Project logo
+  * Project logo
+  * Game logo

@@ -5,7 +5,7 @@ use warnings;
 use Webstellation::Struct::Player;
 
 sub run {
-	my ($inf, $dbi, $data) = @_;
+	my ($inv, $dbi, $data) = @_;
 	my $player = new Webstellation::Struct::Player $dbi;
 	$player->load($data->{userName}) || return { result => $player->error };
 	$player->delete;

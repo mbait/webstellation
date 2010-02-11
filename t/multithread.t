@@ -10,8 +10,6 @@ sub is_in{
 	ok grep({ $ans->[0] } @{$res}), $msg;
 }
 
-our $host = 'http://watcher.mine.nu/constellation/server';
-
 test { action => 'clearAll' }, result => 'ok', 'clear databse';
 my $pid;
 for(my $i=0; $i<100; ++$i) {
@@ -23,3 +21,4 @@ for(my $i=0; $i<100; ++$i) {
 	test { action => 'logout', userName => $user }, result => 'ok', "logout user $user $pid";
 	last unless $pid;
 }
+waitpid $pid, 0 if $pid;

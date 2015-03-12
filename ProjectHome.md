@@ -1,0 +1,3 @@
+[Webstellation](RulesOfTheGame.md) is web-browser multiplayer version of [Constellation](http://www.paperdragongames.com/PaperDragon/Home/Home.html) - the fun and easy strategy game.
+
+The project includes both client and server implementation. So if you have installed [perl distro](http://www.perl.org/) and one of the [major web-browsers](http://en.wikipedia.org/wiki/Web_browser) you will be able to try it yourself. Also there will be AI soon.
